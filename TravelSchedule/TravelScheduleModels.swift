@@ -10,6 +10,40 @@ struct TravelBaseResponse: Decodable {
     }
 }
 
+// MARK: - Модель для ближайшего города
+struct City: Decodable {
+    let distance: Double
+    let code: String
+    let title: String
+    let popularTitle: String?
+    let shortTitle: String?
+    let lat: Double
+    let lng: Double
+    let type: String
+
+    enum CodingKeys: String, CodingKey {
+        case distance, code, title, lat, lng, type
+        case popularTitle = "popular_title"
+        case shortTitle = "short_title"
+    }
+}
+
+// MARK: - Модели для копирайта
+struct CopyrightResponse: Decodable {
+    let copyright: Copyright
+}
+
+struct Copyright: Decodable {
+    let logo_vm: String?
+    let url: String?
+    let logo_vd: String?
+    let logo_hy: String?
+    let logo_hd: String?
+    let logo_vy: String?
+    let logo_hm: String?
+    let text: String?
+}
+
 // MARK: - Station models
 struct StationsResponse: Decodable {
     let countries: [Country]?

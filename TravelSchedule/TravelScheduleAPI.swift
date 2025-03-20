@@ -1,20 +1,26 @@
 import Foundation
 
 class YandexScheduleAPI {
-    private let apiKey: String
+    let stationsService: StationsService
+    let scheduleService: ScheduleService
+    let routesService: RoutesService
+    let threadService: ThreadService
+    let carrierService: CarrierService
+    let settlementService: SettlementService
+    let copyrightService: CopyrightService
     
-    private(set) lazy var stationsService: StationsService = TravelStationsService(client: client)
-    private(set) lazy var scheduleService: ScheduleService = TravelScheduleService(client: client)
-    private(set) lazy var routesService: RoutesService = TravelRoutesService(client: client)
-    private(set) lazy var threadService: ThreadService = TravelThreadService(client: client)
-    private(set) lazy var carrierService: CarrierService = TravelCarrierService(client: client)
-    
-    private lazy var client: TravelScheduleClient = {
-        return TravelScheduleClient(apiKey: apiKey)
-    }()
+    private let client: TravelScheduleClient
     
     init(apiKey: String) {
-        self.apiKey = apiKey
+        print("API key: \(apiKey)")
+        self.client = TravelScheduleClient(apiKey: apiKey)
+        self.stationsService = TravelStationsService(client: client)
+        self.scheduleService = TravelScheduleService(client: client)
+        self.routesService = TravelRoutesService(client: client)
+        self.threadService = TravelThreadService(client: client)
+        self.carrierService = TravelCarrierService(client: client)
+        self.settlementService = TravelSettlementService(client: client)
+        self.copyrightService = TravelCopyrightService(client: client)
     }
     
     func validateAPIKey(completion: @escaping (Bool) -> Void) {

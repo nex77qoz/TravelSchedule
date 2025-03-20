@@ -22,7 +22,7 @@ protocol ThreadService {
 }
 
 protocol CarrierService {
-    func getCarriersList(completion: @escaping (Result<CarriersResponse, TravelScheduleError>) -> Void)
+    func getCarriersList(code: Int, completion: @escaping (Result<CarriersResponse, TravelScheduleError>) -> Void)
     func getCarrierById(code: Int, completion: @escaping (Result<Carrier, TravelScheduleError>) -> Void)
 }
 
@@ -139,13 +139,23 @@ class TravelCarrierService: CarrierService {
         self.client = client
     }
     
-    func getCarriersList(completion: @escaping (Result<CarriersResponse, TravelScheduleError>) -> Void) {
-        let parameters = ["format": "json"]
+    func getCarriersList(code: Int, completion: @escaping (Result<CarriersResponse, TravelScheduleError>) -> Void) {
+        let parameters: [String: Any] = [
+            "format": "json",
+            "code": code
+        ]
+        print("DEBUG - Calling getCarriersList with parameters: \(parameters)")
         client.request(endpoint: "/carrier", parameters: parameters, completion: completion)
     }
     
     func getCarrierById(code: Int, completion: @escaping (Result<Carrier, TravelScheduleError>) -> Void) {
-        let parameters = ["format": "json", "code": code] as [String : Any]
+        let parameters: [String: Any] = [
+            "format": "json",
+            "code": code
+        ]
+        
+        print("DEBUG - Calling getCarrierById with parameters: \(parameters)")
+        
         client.request(endpoint: "/carrier", parameters: parameters) { (result: Result<CarrierResponse, TravelScheduleError>) in
             switch result {
             case .success(let response):

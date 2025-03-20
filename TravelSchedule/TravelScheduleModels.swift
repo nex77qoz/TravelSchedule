@@ -252,8 +252,40 @@ struct Segment: Decodable {
 struct ThreadResponse: Decodable {
     let thread: Thread
     let stops: [StopInfo]
+    
+    enum CodingKeys: String, CodingKey {
+        case thread, stops
+    }
+    
+    enum FlatCodingKeys: String, CodingKey {
+        case stops
+    }
+    
+    init(thread: Thread, stops: [StopInfo]) {
+        self.thread = thread
+        self.stops = stops
+    }
+    
+    init(from decoder: Decoder) throws {
+        if let container = try? decoder.container(keyedBy: CodingKeys.self),
+           let threadValue = try? container.decode(Thread.self, forKey: .thread),
+           let stopsValue = try? container.decode([StopInfo].self, forKey: .stops) {
+            self.thread = threadValue
+            self.stops = stopsValue
+            return
+        }
+        
+        let thread = try Thread(from: decoder)
+        let flatContainer = try decoder.container(keyedBy: FlatCodingKeys.self)
+        let stops = try flatContainer.decodeIfPresent([StopInfo].self, forKey: .stops) ?? []
+        self.thread = thread
+        self.stops = stops
+    }
 }
 
+
+
+// MARK: - Stop Information
 struct StopInfo: Decodable {
     let station: Station
     let arrival: String?

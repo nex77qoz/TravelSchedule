@@ -1,32 +1,32 @@
 import Foundation
 
-// MARK: - Service protocols
+// MARK: - Протоколы сервисов
 
 protocol StationsService {
-    func searchStations(query: String, completion: @escaping (Result<StationsResponse, TravelScheduleError>) -> Void)
-    func getStationById(code: String, completion: @escaping (Result<Station, TravelScheduleError>) -> Void)
-    func getNearestStations(lat: Double, lng: Double, distance: Int, transportTypes: [String], completion: @escaping (Result<NearestStationsResponse, TravelScheduleError>) -> Void)
+    func searchStations(query: String) async throws -> StationsResponse
+    func getStationById(code: String) async throws -> Station
+    func getNearestStations(lat: Double, lng: Double, distance: Int, transportTypes: [String]) async throws -> NearestStationsResponse
 }
 
 protocol ScheduleService {
-    func getStationSchedule(station: String, date: String, transportTypes: [String]?, completion: @escaping (Result<ScheduleResponse, TravelScheduleError>) -> Void)
-    func getStationTimetable(station: String, direction: String?, event: String?, completion: @escaping (Result<ScheduleResponse, TravelScheduleError>) -> Void)
+    func getStationSchedule(station: String, date: String, transportTypes: [String]?) async throws -> ScheduleResponse
+    func getStationTimetable(station: String, direction: String?, event: String?) async throws -> ScheduleResponse
 }
 
 protocol RoutesService {
-    func searchRoutes(from: String, to: String, date: String, transportTypes: [String]?, completion: @escaping (Result<RoutesResponse, TravelScheduleError>) -> Void)
+    func searchRoutes(from: String, to: String, date: String, transportTypes: [String]?) async throws -> RoutesResponse
 }
 
 protocol ThreadService {
-    func getThreadInfo(uid: String, completion: @escaping (Result<ThreadResponse, TravelScheduleError>) -> Void)
+    func getThreadInfo(uid: String) async throws -> ThreadResponse
 }
 
 protocol CarrierService {
-    func getCarriersList(code: Int, completion: @escaping (Result<CarriersResponse, TravelScheduleError>) -> Void)
-    func getCarrierById(code: Int, completion: @escaping (Result<Carrier, TravelScheduleError>) -> Void)
+    func getCarriersList(code: Int) async throws -> CarriersResponse
+    func getCarrierById(code: Int) async throws -> Carrier
 }
 
-// MARK: - Service implementations
+// MARK: - Реализация сервисов
 
 class TravelStationsService: StationsService {
     private let client: TravelScheduleClient
@@ -35,22 +35,40 @@ class TravelStationsService: StationsService {
         self.client = client
     }
     
-    func searchStations(query: String, completion: @escaping (Result<StationsResponse, TravelScheduleError>) -> Void) {
+    func searchStations(query: String) async throws -> StationsResponse {
         let parameters = ["format": "json", "text": query]
-        client.request(endpoint: "/stations_list", parameters: parameters, completion: completion)
+        let result: Result<StationsResponse, TravelScheduleError> = await client.request(endpoint: "/stations_list", parameters: parameters)
+        switch result {
+        case .success(let response):
+            return response
+        case .failure(let error):
+            throw error
+        }
     }
     
-    func getStationById(code: String, completion: @escaping (Result<Station, TravelScheduleError>) -> Void) {
+    func getStationById(code: String) async throws -> Station {
         let parameters = ["format": "json", "station": code]
-        client.request(endpoint: "/station", parameters: parameters, completion: completion)
+        let result: Result<Station, TravelScheduleError> = await client.request(endpoint: "/station", parameters: parameters)
+        switch result {
+        case .success(let station):
+            return station
+        case .failure(let error):
+            throw error
+        }
     }
     
-    func getNearestStations(lat: Double, lng: Double, distance: Int, transportTypes: [String], completion: @escaping (Result<NearestStationsResponse, TravelScheduleError>) -> Void) {
+    func getNearestStations(lat: Double, lng: Double, distance: Int, transportTypes: [String]) async throws -> NearestStationsResponse {
         var parameters: [String: Any] = ["format": "json", "lat": lat, "lng": lng, "distance": distance]
         if !transportTypes.isEmpty {
             parameters["transport_types"] = transportTypes.joined(separator: ",")
         }
-        client.request(endpoint: "/nearest_stations", parameters: parameters, completion: completion)
+        let result: Result<NearestStationsResponse, TravelScheduleError> = await client.request(endpoint: "/nearest_stations", parameters: parameters)
+        switch result {
+        case .success(let response):
+            return response
+        case .failure(let error):
+            throw error
+        }
     }
 }
 
@@ -61,26 +79,29 @@ class TravelScheduleService: ScheduleService {
         self.client = client
     }
     
-    func getStationSchedule(station: String, date: String, transportTypes: [String]?, completion: @escaping (Result<ScheduleResponse, TravelScheduleError>) -> Void) {
+    func getStationSchedule(station: String, date: String, transportTypes: [String]?) async throws -> ScheduleResponse {
         var parameters: [String: Any] = ["format": "json", "station": station]
         
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        
-        if let _ = dateFormatter.date(from: date) {
+        if DateFormatter.apiDateFormatter.date(from: date) != nil {
             parameters["date"] = date
         } else {
-            parameters["date"] = dateFormatter.string(from: Date())
+            parameters["date"] = DateFormatter.apiDateFormatter.string(from: Date())
         }
         
         if let transportTypes = transportTypes, !transportTypes.isEmpty {
             parameters["transport_types"] = transportTypes.joined(separator: ",")
         }
         
-        client.request(endpoint: "/schedule", parameters: parameters, completion: completion)
+        let result: Result<ScheduleResponse, TravelScheduleError> = await client.request(endpoint: "/schedule", parameters: parameters)
+        switch result {
+        case .success(let response):
+            return response
+        case .failure(let error):
+            throw error
+        }
     }
     
-    func getStationTimetable(station: String, direction: String?, event: String?, completion: @escaping (Result<ScheduleResponse, TravelScheduleError>) -> Void) {
+    func getStationTimetable(station: String, direction: String?, event: String?) async throws -> ScheduleResponse {
         var parameters: [String: Any] = ["format": "json", "station": station]
         if let direction = direction, !direction.isEmpty {
             parameters["direction"] = direction
@@ -88,7 +109,13 @@ class TravelScheduleService: ScheduleService {
         if let event = event, !event.isEmpty {
             parameters["event"] = event
         }
-        client.request(endpoint: "/timetable", parameters: parameters, completion: completion)
+        let result: Result<ScheduleResponse, TravelScheduleError> = await client.request(endpoint: "/timetable", parameters: parameters)
+        switch result {
+        case .success(let response):
+            return response
+        case .failure(let error):
+            throw error
+        }
     }
 }
 
@@ -99,23 +126,26 @@ class TravelRoutesService: RoutesService {
         self.client = client
     }
     
-    func searchRoutes(from: String, to: String, date: String, transportTypes: [String]?, completion: @escaping (Result<RoutesResponse, TravelScheduleError>) -> Void) {
+    func searchRoutes(from: String, to: String, date: String, transportTypes: [String]?) async throws -> RoutesResponse {
         var parameters: [String: Any] = ["format": "json", "from": from, "to": to]
         
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        
-        if let _ = dateFormatter.date(from: date) {
+        if DateFormatter.apiDateFormatter.date(from: date) != nil {
             parameters["date"] = date
         } else {
-            parameters["date"] = dateFormatter.string(from: Date())
+            parameters["date"] = DateFormatter.apiDateFormatter.string(from: Date())
         }
         
         if let transportTypes = transportTypes, !transportTypes.isEmpty {
             parameters["transport_types"] = transportTypes.joined(separator: ",")
         }
         
-        client.request(endpoint: "/search", parameters: parameters, completion: completion)
+        let result: Result<RoutesResponse, TravelScheduleError> = await client.request(endpoint: "/search", parameters: parameters)
+        switch result {
+        case .success(let response):
+            return response
+        case .failure(let error):
+            throw error
+        }
     }
 }
 
@@ -126,9 +156,15 @@ class TravelThreadService: ThreadService {
         self.client = client
     }
     
-    func getThreadInfo(uid: String, completion: @escaping (Result<ThreadResponse, TravelScheduleError>) -> Void) {
+    func getThreadInfo(uid: String) async throws -> ThreadResponse {
         let parameters = ["format": "json", "uid": uid]
-        client.request(endpoint: "/thread", parameters: parameters, completion: completion)
+        let result: Result<ThreadResponse, TravelScheduleError> = await client.request(endpoint: "/thread", parameters: parameters)
+        switch result {
+        case .success(let response):
+            return response
+        case .failure(let error):
+            throw error
+        }
     }
 }
 
@@ -139,30 +175,25 @@ class TravelCarrierService: CarrierService {
         self.client = client
     }
     
-    func getCarriersList(code: Int, completion: @escaping (Result<CarriersResponse, TravelScheduleError>) -> Void) {
-        let parameters: [String: Any] = [
-            "format": "json",
-            "code": code
-        ]
-        print("DEBUG - Calling getCarriersList with parameters: \(parameters)")
-        client.request(endpoint: "/carrier", parameters: parameters, completion: completion)
+    func getCarriersList(code: Int) async throws -> CarriersResponse {
+        let parameters: [String: Any] = ["format": "json", "code": code]
+        let result: Result<CarriersResponse, TravelScheduleError> = await client.request(endpoint: "/carrier", parameters: parameters)
+        switch result {
+        case .success(let response):
+            return response
+        case .failure(let error):
+            throw error
+        }
     }
     
-    func getCarrierById(code: Int, completion: @escaping (Result<Carrier, TravelScheduleError>) -> Void) {
-        let parameters: [String: Any] = [
-            "format": "json",
-            "code": code
-        ]
-        
-        print("DEBUG - Calling getCarrierById with parameters: \(parameters)")
-        
-        client.request(endpoint: "/carrier", parameters: parameters) { (result: Result<CarrierResponse, TravelScheduleError>) in
-            switch result {
-            case .success(let response):
-                completion(.success(response.carrier))
-            case .failure(let error):
-                completion(.failure(error))
-            }
+    func getCarrierById(code: Int) async throws -> Carrier {
+        let parameters: [String: Any] = ["format": "json", "code": code]
+        let result: Result<CarrierResponse, TravelScheduleError> = await client.request(endpoint: "/carrier", parameters: parameters)
+        switch result {
+        case .success(let response):
+            return response.carrier
+        case .failure(let error):
+            throw error
         }
     }
 }

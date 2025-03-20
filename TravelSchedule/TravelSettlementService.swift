@@ -1,7 +1,7 @@
 import Foundation
 
 protocol SettlementService {
-    func getNearestCity(lat: Double, lng: Double, distance: Int, completion: @escaping (Result<City, TravelScheduleError>) -> Void)
+    func getNearestCity(lat: Double, lng: Double, distance: Int) async throws -> City
 }
 
 class TravelSettlementService: SettlementService {
@@ -11,7 +11,7 @@ class TravelSettlementService: SettlementService {
         self.client = client
     }
     
-    func getNearestCity(lat: Double, lng: Double, distance: Int, completion: @escaping (Result<City, TravelScheduleError>) -> Void) {
+    func getNearestCity(lat: Double, lng: Double, distance: Int) async throws -> City {
         let parameters: [String: Any] = [
             "format": "json",
             "lat": lat,
@@ -19,6 +19,12 @@ class TravelSettlementService: SettlementService {
             "distance": distance,
             "lang": "ru_RU"
         ]
-        client.request(endpoint: "/nearest_settlement/", parameters: parameters, completion: completion)
+        let result: Result<City, TravelScheduleError> = await client.request(endpoint: "/nearest_settlement/", parameters: parameters)
+        switch result {
+        case .success(let city):
+            return city
+        case .failure(let error):
+            throw error
+        }
     }
 }

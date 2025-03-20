@@ -1,7 +1,7 @@
 import Foundation
 
 protocol CopyrightService {
-    func getCopyright(completion: @escaping (Result<CopyrightResponse, TravelScheduleError>) -> Void)
+    func getCopyright() async throws -> CopyrightResponse
 }
 
 class TravelCopyrightService: CopyrightService {
@@ -11,10 +11,14 @@ class TravelCopyrightService: CopyrightService {
         self.client = client
     }
     
-    func getCopyright(completion: @escaping (Result<CopyrightResponse, TravelScheduleError>) -> Void) {
-        let parameters: [String: Any] = [
-            "format": "json"
-        ]
-        client.request(endpoint: "/copyright/", parameters: parameters, completion: completion)
+    func getCopyright() async throws -> CopyrightResponse {
+        let parameters: [String: Any] = ["format": "json"]
+        let result: Result<CopyrightResponse, TravelScheduleError> = await client.request(endpoint: "/copyright/", parameters: parameters)
+        switch result {
+        case .success(let response):
+            return response
+        case .failure(let error):
+            throw error
+        }
     }
 }

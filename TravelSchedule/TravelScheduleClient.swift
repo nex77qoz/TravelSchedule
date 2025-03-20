@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 
 enum TravelScheduleError: Error {
     case invalidURL
@@ -11,64 +12,56 @@ enum TravelScheduleError: Error {
 }
 
 class TravelScheduleClient {
-    private let apiKey: String
+    let apiKey: String
     private let baseURL = "https://api.rasp.yandex.net/v3.0"
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "TravelSchedule", category: "Network")
+    
+    static let decoder: JSONDecoder = {
+        let decoder = JSONDecoder()
+        return decoder
+    }()
     
     init(apiKey: String) {
         self.apiKey = apiKey
+        logger.debug("Initialized with API key: \(apiKey)")
     }
     
-    func request<T: Decodable>(
-        endpoint: String,
-        parameters: [String: Any],
-        completion: @escaping (Result<T, TravelScheduleError>) -> Void
-    ) {
+    private func buildURL(endpoint: String, parameters: [String: Any]) -> URL? {
         var allParameters = parameters
         allParameters["apikey"] = apiKey
-
+        
         guard var components = URLComponents(string: baseURL + endpoint) else {
-            completion(.failure(.invalidURL))
-            return
+            return nil
         }
-        
-        var queryItems = [URLQueryItem]()
-        for (key, value) in allParameters {
-            queryItems.append(URLQueryItem(name: key, value: "\(value)"))
+        components.queryItems = allParameters.map { URLQueryItem(name: $0.key, value: "\($0.value)") }
+        return components.url
+    }
+    
+    func request<T: Decodable>(endpoint: String, parameters: [String: Any]) async -> Result<T, TravelScheduleError> {
+        guard let url = buildURL(endpoint: endpoint, parameters: parameters) else {
+            return .failure(.invalidURL)
         }
-        components.queryItems = queryItems
+        logger.debug("Request URL: \(url.absoluteString)")
         
-        guard let url = components.url else {
-            completion(.failure(.invalidURL))
-            return
-        }
-        
-        print("Формируем URL: \(url)")
-        
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            if let error = error {
-                completion(.failure(.networkError(error)))
-                return
-            }
+        do {
+            let (data, response) = try await URLSession.shared.data(from: url)
             guard let httpResponse = response as? HTTPURLResponse else {
-                completion(.failure(.noData))
-                return
+                return .failure(.noData)
             }
             guard (200..<300).contains(httpResponse.statusCode) else {
-                completion(.failure(.serverError(httpResponse.statusCode)))
-                return
+                if httpResponse.statusCode == 401 {
+                    return .failure(.unauthorized)
+                }
+                return .failure(.serverError(httpResponse.statusCode))
             }
-            guard let data = data else {
-                completion(.failure(.noData))
-                return
+            let decoded = try TravelScheduleClient.decoder.decode(T.self, from: data)
+            return .success(decoded)
+        } catch {
+            if let error = error as? DecodingError {
+                return .failure(.decodingError(error))
             }
-            do {
-                let result = try JSONDecoder().decode(T.self, from: data)
-                completion(.success(result))
-            } catch let decodeError {
-                completion(.failure(.decodingError(decodeError)))
-            }
+            return .failure(.networkError(error))
         }
-        
-        task.resume()
     }
+    
 }

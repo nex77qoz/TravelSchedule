@@ -65,7 +65,8 @@ struct StationsResponse: Decodable {
     }
 }
 
-struct Station: Decodable {
+struct Station: Decodable, Identifiable {
+    var id: String { code }
     let code: String
     let title: String
     let stationType: String?
@@ -174,7 +175,8 @@ struct Thread: Decodable {
     }
 }
 
-struct Carrier: Decodable {
+struct Carrier: Decodable, Identifiable {
+    var id: Int { code }
     let code: Int
     let title: String
     let codes: CarrierCodes?

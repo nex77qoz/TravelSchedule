@@ -29,7 +29,7 @@ struct MainTabView: View {
                 }
             }
             .toolbar(.visible, for: .tabBar)
-            .accentColor(.ypDarkGray)
+            .accentColor(darkMode ? .white : .black)
             .navigationDestination(for: ViewsChanger.self) { pathValue in
                 switch pathValue {
                 case .cityView:

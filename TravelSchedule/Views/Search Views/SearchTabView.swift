@@ -13,8 +13,6 @@ struct SearchTabView: View {
 
             // Основной блок с выбором направлений и кнопкой "Найти"
             MainSearchView(schedule: $schedule, navPath: $navPath, direction: $direction)
-
-            Spacer()
         }
     }
 }

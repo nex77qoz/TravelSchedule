@@ -25,7 +25,7 @@ struct FilterView: View {
                 .font(.boldMedium)
                 .padding(.spacerL)
 
-            VStack(spacing: 0) {
+            Group {
                 RadioRowView(title: "Да", isOn: $currentFilter.isWithTransfers)
                 RadioRowView(title: "Нет", isOn: $currentFilter.isWithTransfers.not)
             }

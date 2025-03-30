@@ -7,5 +7,6 @@ struct RadioRowView: View {
     var body: some View {
         Toggle(title, isOn: $isOn)
             .toggleStyle(RadioButtonToggleStyle())
+            .padding(.spacerL)
     }
 }

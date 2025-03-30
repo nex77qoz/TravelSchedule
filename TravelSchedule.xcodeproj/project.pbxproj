@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		75859CBF2D72FA8800D800CC /* OpenAPIRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 75859CBE2D72FA8800D800CC /* OpenAPIRuntime */; };
 		75859CC22D72FA9800D800CC /* OpenAPIURLSession in Frameworks */ = {isa = PBXBuildFile; productRef = 75859CC12D72FA9800D800CC /* OpenAPIURLSession */; };
+		75C0CFCC2D97D5FB00A1EF16 /* OpenAPIKit in Frameworks */ = {isa = PBXBuildFile; productRef = 75C0CFCB2D97D5FB00A1EF16 /* OpenAPIKit */; };
+		75C0CFCE2D97D5FB00A1EF16 /* OpenAPIKit30 in Frameworks */ = {isa = PBXBuildFile; productRef = 75C0CFCD2D97D5FB00A1EF16 /* OpenAPIKit30 */; };
+		75C0CFD02D97D5FB00A1EF16 /* OpenAPIKitCompat in Frameworks */ = {isa = PBXBuildFile; productRef = 75C0CFCF2D97D5FB00A1EF16 /* OpenAPIKitCompat */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,7 +32,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				75859CBF2D72FA8800D800CC /* OpenAPIRuntime in Frameworks */,
+				75C0CFCC2D97D5FB00A1EF16 /* OpenAPIKit in Frameworks */,
 				75859CC22D72FA9800D800CC /* OpenAPIURLSession in Frameworks */,
+				75C0CFD02D97D5FB00A1EF16 /* OpenAPIKitCompat in Frameworks */,
+				75C0CFCE2D97D5FB00A1EF16 /* OpenAPIKit30 in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,6 +81,9 @@
 			packageProductDependencies = (
 				75859CBE2D72FA8800D800CC /* OpenAPIRuntime */,
 				75859CC12D72FA9800D800CC /* OpenAPIURLSession */,
+				75C0CFCB2D97D5FB00A1EF16 /* OpenAPIKit */,
+				75C0CFCD2D97D5FB00A1EF16 /* OpenAPIKit30 */,
+				75C0CFCF2D97D5FB00A1EF16 /* OpenAPIKitCompat */,
 			);
 			productName = TravelSchedule;
 			productReference = 75859CA92D72E88F00D800CC /* TravelSchedule.app */;
@@ -108,6 +117,7 @@
 				75859CBD2D72FA8800D800CC /* XCRemoteSwiftPackageReference "swift-openapi-runtime" */,
 				75859CC02D72FA9800D800CC /* XCRemoteSwiftPackageReference "swift-openapi-urlsession" */,
 				75859CC32D72FB1400D800CC /* XCRemoteSwiftPackageReference "swift-openapi-generator" */,
+				75C0CFCA2D97D5FB00A1EF16 /* XCRemoteSwiftPackageReference "OpenAPIKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 75859CAA2D72E88F00D800CC /* Products */;
@@ -282,7 +292,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -316,7 +326,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -382,6 +392,14 @@
 				minimumVersion = 1.7.0;
 			};
 		};
+		75C0CFCA2D97D5FB00A1EF16 /* XCRemoteSwiftPackageReference "OpenAPIKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mattpolzin/OpenAPIKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.4.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -399,6 +417,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 75859CC32D72FB1400D800CC /* XCRemoteSwiftPackageReference "swift-openapi-generator" */;
 			productName = "plugin:OpenAPIGenerator";
+		};
+		75C0CFCB2D97D5FB00A1EF16 /* OpenAPIKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 75C0CFCA2D97D5FB00A1EF16 /* XCRemoteSwiftPackageReference "OpenAPIKit" */;
+			productName = OpenAPIKit;
+		};
+		75C0CFCD2D97D5FB00A1EF16 /* OpenAPIKit30 */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 75C0CFCA2D97D5FB00A1EF16 /* XCRemoteSwiftPackageReference "OpenAPIKit" */;
+			productName = OpenAPIKit30;
+		};
+		75C0CFCF2D97D5FB00A1EF16 /* OpenAPIKitCompat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 75C0CFCA2D97D5FB00A1EF16 /* XCRemoteSwiftPackageReference "OpenAPIKit" */;
+			productName = OpenAPIKitCompat;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

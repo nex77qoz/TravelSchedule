@@ -7,6 +7,7 @@ struct SettingsView: View {
         VStack(spacing: 0) {
             // Стандартный iOS-свитч с нужной стилизацией
             ToggleRowView(title: "Тёмная тема", isOn: $darkMode)
+                .tint(.ypBlue)
 
             NavigationLink {
                 AgreementView(darkMode: darkMode)

@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct AgreementView: View {
+    let darkMode: Bool
+
     @State private var simulateConnectionError = false
     @State private var simulateServerError = false
     @State private var isContinueTapped = false
@@ -44,7 +46,7 @@ struct AgreementView: View {
         } else if simulateServerError {
             ErrorView(errorType: .serverError)
         } else if let url = URL(string: urlString) {
-            WebView(url: url)
+            WebView(url: url, darkMode: darkMode)
                 .setCustomNavigationBar(title: "Пользовательское соглашение")
         } else {
             ErrorView(errorType: .serverError)

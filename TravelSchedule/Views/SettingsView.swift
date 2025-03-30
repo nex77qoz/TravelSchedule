@@ -9,7 +9,7 @@ struct SettingsView: View {
             ToggleRowView(title: "Тёмная тема", isOn: $darkMode)
 
             NavigationLink {
-                AgreementView()
+                AgreementView(darkMode: darkMode)
             } label: {
                 SelectableRowView(title: "Пользовательское соглашение")
                     .background(Color(.systemBackground))

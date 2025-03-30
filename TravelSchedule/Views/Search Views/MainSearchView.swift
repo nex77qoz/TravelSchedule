@@ -4,28 +4,32 @@ struct MainSearchView: View {
     @Binding var schedule: Schedule
     @Binding var navPath: [ViewsChanger]
     @Binding var direction: Int
-    
+
     private let dummyDirection = ["Откуда", "Куда"]
-    
+
     // Проверка, заполнено ли направление "откуда"
     private var isDepartureReady: Bool {
         !schedule.destinations[.departure].cityTitle.isEmpty &&
         !schedule.destinations[.departure].stationTitle.isEmpty
     }
-    
+
     // Проверка, заполнено ли направление "куда"
     private var isArrivalReady: Bool {
         !schedule.destinations[.arrival].cityTitle.isEmpty &&
         !schedule.destinations[.arrival].stationTitle.isEmpty
     }
-    
+
+    private var isFindButtonHidden: Bool {
+        !(isDepartureReady && isArrivalReady)
+    }
+
     var body: some View {
         ZStack {
             Color.ypWhiteDuo
                 .ignoresSafeArea()
 
             VStack {
-                HStack(alignment: .center, spacing: 16) {
+                HStack(spacing: 16) {
                     VStack(alignment: .leading, spacing: 0) {
                         ForEach(0 ..< 2) { item in
                             let isCityEmpty = schedule.destinations[item].cityTitle.isEmpty
@@ -74,31 +78,22 @@ struct MainSearchView: View {
                 .padding(.top, .spacerXL)
                 .padding(.horizontal, .spacerL)
 
-                if isDepartureReady && isArrivalReady {
-                    NavigationLink(value: ViewsChanger.routeView) {
-                        Text("Найти")
-                            .font(.boldSmall)
-                            .foregroundStyle(.ypWhite)
-                            .frame(width: 150, height: 60)
-                            .background(.ypBlue)
-                            .clipShape(RoundedRectangle(cornerRadius: 16))
-                            .padding(.spacerL)
-                    }
+                NavigationLink(value: ViewsChanger.routeView) {
+                    Text("Найти")
+                        .font(.boldSmall)
+                        .foregroundStyle(.ypWhite)
+                        .frame(width: 150, height: 60)
+                        .background(.ypBlue)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                        .padding(.spacerL)
                 }
+                .opacity(isFindButtonHidden ? 0 : 1)
+                .disabled(isFindButtonHidden)
+                .animation(.easeInOut(duration: 0.3), value: isFindButtonHidden)
 
                 Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-    }
-}
-
-#Preview {
-    NavigationStack {
-        MainSearchView(
-            schedule: .constant(Schedule.sampleData),
-            navPath: .constant([]),
-            direction: .constant(0)
-        )
     }
 }

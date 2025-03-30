@@ -8,7 +8,8 @@ enum APIKeys {
             let plist = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
             let key = plist["YANDEX_API_KEY"] as? String
         else {
-            fatalError("YANDEX_API_KEY не найден в APIKeys.plist")
+            assertionFailure("YANDEX_API_KEY не найден в APIKeys.plist")
+            return ""
         }
         return key
     }

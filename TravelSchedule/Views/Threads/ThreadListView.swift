@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ThreadListView: View {
     @Binding var schedule: Schedule
-    @State var currentFilter = Filter()
+    @State private var currentFilter = Filter()
 
     private var departure: String {
         schedule.destinations[.departure].cityTitle + " (" + schedule.destinations[.departure].stationTitle + ") "
@@ -15,7 +15,7 @@ struct ThreadListView: View {
     private var filteredRoutes: [Route] {
         let complexRoutes = currentFilter.isWithTransfers
             ? schedule.routes
-            : schedule.routes.filter { $0.isDirect == true }
+            : schedule.routes.filter { $0.isDirect }
         var allRoutes = currentFilter.isAtNight
             ? complexRoutes.filter { $0.departureTime.starts(with: /0[0-5]/) }
             : []

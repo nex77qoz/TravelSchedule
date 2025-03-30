@@ -2,9 +2,9 @@ import SwiftUI
 
 struct SelectableRowView: View {
     var title: String
-    var subtitle: String? = nil
+    var subtitle: String?
     var isDimmed: Bool = false
-    var rightIcon: Image? = nil
+    var rightIcon: Image?
 
     var body: some View {
         HStack {

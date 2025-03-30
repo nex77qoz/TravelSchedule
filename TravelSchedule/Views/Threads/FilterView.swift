@@ -2,7 +2,7 @@ import SwiftUI
 
 struct FilterView: View {
     @Binding var filter: Filter
-    @State var currentFilter = Filter()
+    @State private var currentFilter = Filter()
 
     @Environment(\.presentationMode) var presentationMode
 

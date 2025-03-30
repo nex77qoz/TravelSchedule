@@ -17,7 +17,7 @@ struct AgreementView: View {
                 setupView()
             }
         }
-        .ignoresSafeArea(.all, edges: .bottom)
+        .ignoresSafeArea(edges: .bottom)
     }
 
     @ViewBuilder

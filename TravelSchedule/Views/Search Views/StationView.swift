@@ -24,7 +24,7 @@ struct StationView: View {
                 EmptySearchView(notification: "Станция не найдена")
             } else {
                 // Список найденных станций
-                ScrollView(.vertical) {
+                ScrollView() {
                     ForEach(searchingResults) { station in
                         Button {
                             // Сохраняем выбранную станцию и возвращаемся назад

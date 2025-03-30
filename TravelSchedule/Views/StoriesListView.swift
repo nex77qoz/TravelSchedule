@@ -17,6 +17,7 @@ struct StoriesListView: View {
             .padding(.vertical, .spacerXXL)
         }
         .frame(height: 188)
+        .background(Color.ypWhiteDuo)
     }
 }
 

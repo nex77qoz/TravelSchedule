@@ -5,7 +5,6 @@ struct SettingsView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Стандартный iOS-свитч с нужной стилизацией
             ToggleRowView(title: "Тёмная тема", isOn: $darkMode)
                 .tint(.ypBlue)
 
@@ -13,7 +12,7 @@ struct SettingsView: View {
                 AgreementView(darkMode: darkMode)
             } label: {
                 SelectableRowView(title: "Пользовательское соглашение")
-                    .background(Color(.systemBackground))
+                    .background(.ypWhiteDuo)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
             }
 
@@ -26,8 +25,9 @@ struct SettingsView: View {
             .font(.regSmall)
             .frame(minHeight: 44)
         }
-        .background(Color(.systemBackground))
-        .padding(.vertical, .spacerXXL)
+        .padding(.top, .spacerXXL)
+        .padding(.bottom, 0)
+        .background(.ypWhiteDuo)
         .foregroundColor(.ypBlackDuo)
     }
 }

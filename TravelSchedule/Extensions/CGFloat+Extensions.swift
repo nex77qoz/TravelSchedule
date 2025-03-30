@@ -4,9 +4,11 @@ extension CGFloat {
     static let iconSize = 17.0
 
     static let spacerXS = 4.0
+    static let progressBar = 6.0
     static let spacerS = 8.0
     static let spacerM = 12.0
     static let spacerL = 16.0
     static let spacerXL = 20.0
     static let spacerXXL = 24.0
+    static let button = 36.0
 }

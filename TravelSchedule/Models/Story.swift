@@ -1,78 +1,25 @@
 import Foundation
 
-struct Story: Hashable, Identifiable {
-    let id = UUID()
-    let previewImageName: String
-    let pageImageNames: [String]
-    let title: String
-    let text: String
-    var isRead: Bool
+struct Story: Identifiable {
+    var id = UUID()
+    var imageName: String
+    var isShowed: Bool = false
+    var title: String
+    var storyPages: [StoryPage]
 }
 
 extension Story {
-    static let sampleData = [
-        Story(
-            previewImageName: "preview1",
-            pageImageNames: ["big1-1", "big1-2"],
-            title: "Text Text",
-            text: "Text Text Text Text Text Text Text Text",
-            isRead: false
-        ),
-        Story(
-            previewImageName: "preview2",
-            pageImageNames: ["big2-1", "big2-2"],
-            title: "Text Text",
-            text: "Text Text Text Text Text Text Text Text",
-            isRead: false
-        ),
-        Story(
-            previewImageName: "preview3",
-            pageImageNames: ["big1-1", "big1-2"],
-            title: "Text Text",
-            text: "Text Text Text Text Text Text Text Text",
-            isRead: false
-        ),
-        Story(
-            previewImageName: "preview4",
-            pageImageNames: ["big2-1", "big2-2"],
-            title: "Text Text",
-            text: "Text Text Text Text Text Text Text Text",
-            isRead: false
-        ),
-        Story(
-            previewImageName: "preview5",
-            pageImageNames: ["big1-1", "big1-2"],
-            title: "Text Text",
-            text: "Text Text Text Text Text Text Text Text",
-            isRead: false
-        ),
-        Story(
-            previewImageName: "preview6",
-            pageImageNames: ["big2-1", "big2-2"],
-            title: "Text Text",
-            text: "Text Text Text Text Text Text Text Text",
-            isRead: false
-        ),
-        Story(
-            previewImageName: "preview7",
-            pageImageNames: ["big1-1", "big1-2"],
-            title: "Text Text",
-            text: "Text Text Text Text Text Text Text Text",
-            isRead: false
-        ),
-        Story(
-            previewImageName: "preview8",
-            pageImageNames: ["big2-1", "big2-2"],
-            title: "Text Text",
-            text: "Text Text Text Text Text Text Text Text",
-            isRead: false
-        ),
-        Story(
-            previewImageName: "preview9",
-            pageImageNames: ["big1-1", "big1-2"],
-            title: "Text Text",
-            text: "Text Text Text Text Text Text Text Text",
-            isRead: false
-        )
+    static let title = Array(repeating: "title", count: 7).joined(separator: " ").capitalized
+
+    static let mockData: [Story] = [
+        Story(imageName: "preview1", title: title, storyPages: StoryPage.mockData1),
+        Story(imageName: "preview2", title: title, storyPages: StoryPage.mockData2),
+        Story(imageName: "preview3", title: title, storyPages: StoryPage.mockData3),
+        Story(imageName: "preview4", title: title, storyPages: StoryPage.mockData4),
+        Story(imageName: "preview5", title: title, storyPages: StoryPage.mockData5),
+        Story(imageName: "preview6", title: title, storyPages: StoryPage.mockData6),
+        Story(imageName: "preview7", title: title, storyPages: StoryPage.mockData7),
+        Story(imageName: "preview8", title: title, storyPages: StoryPage.mockData8),
+        Story(imageName: "preview9", title: title, storyPages: StoryPage.mockData9)
     ]
 }

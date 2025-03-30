@@ -5,55 +5,68 @@ struct WebView: UIViewRepresentable {
     let url: URL
 
     func makeUIView(context: Context) -> WKWebView {
-        let config = WKWebViewConfiguration()
-        let controller = WKUserContentController()
-
-        // CSS для light/dark темы
-        let lightDarkCSS = """
-        :root { color-scheme: light dark; }
-        body {
-            padding-left: 16px !important;
-            padding-right: 16px !important;
-            box-sizing: border-box;
-        }
-        """
-        if let base64 = lightDarkCSS.data(using: .utf8)?.base64EncodedString() {
-            let cssInjection = """
-            javascript:(function() {
-                var parent = document.getElementsByTagName('head').item(0);
-                var style = document.createElement('style');
-                style.type = 'text/css';
-                style.innerHTML = window.atob('\(base64)');
-                parent.appendChild(style);
-            })()
-            """
-            let cssScript = WKUserScript(source: cssInjection, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
-            controller.addUserScript(cssScript)
-        }
-
-        // Скрипт для показа только нужного блока
-        let filterScript = WKUserScript(source: """
-        javascript:(function() {
-            document.body.querySelectorAll('body > *').forEach(el => {
-                if (!el.classList.contains('document') && !el.classList.contains('content__document') && !el.classList.contains('i-bem')) {
-                    el.style.display = 'none';
-                }
-            });
-            let docBlock = document.querySelector('.document.content__document.i-bem');
-            if (docBlock) {
-                document.body.innerHTML = '';
-                document.body.appendChild(docBlock);
-            }
-        })()
-        """, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
-        controller.addUserScript(filterScript)
-
-        config.userContentController = controller
-        return WKWebView(frame: .zero, configuration: config)
+        return WKWebView(frame: .zero)
     }
 
     func updateUIView(_ webView: WKWebView, context: Context) {
-        let request = URLRequest(url: url)
-        webView.load(request)
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data,
+                  var html = String(data: data, encoding: .utf8) else {
+                return
+            }
+
+            if let article = extractArticleBlock(from: html) {
+                html = wrapWithDarkStyledHTML(content: article)
+            } else {
+                html = "<body style='background:#000; color:#fff; font-family:system-ui;'>Не удалось загрузить документ</body>"
+            }
+
+            DispatchQueue.main.async {
+                webView.loadHTMLString(html, baseURL: url)
+            }
+        }.resume()
+    }
+
+    private func extractArticleBlock(from html: String) -> String? {
+        guard let startRange = html.range(of: "<article role=\"article\" aria-labelledby=\"ariaid-title1\" class=\"doc-c-article\""),
+              let endRange = html.range(of: "</article>", range: startRange.upperBound..<html.endIndex) else {
+            return nil
+        }
+
+        let articleStart = startRange.lowerBound
+        let articleEnd = html.range(of: "</article>", range: endRange.lowerBound..<html.endIndex)?.upperBound ?? endRange.upperBound
+        return String(html[articleStart..<articleEnd])
+    }
+
+    private func wrapWithDarkStyledHTML(content: String) -> String {
+        return """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+                html {
+                    background-color: #000;
+                }
+                body {
+                    background-color: #000;
+                    color: #fff;
+                    padding: 16px;
+                    font-family: -apple-system, system-ui, sans-serif;
+                    box-sizing: border-box;
+                }
+                a {
+                    color: #6fa8ff;
+                }
+                h1, h2, h3, h4, h5, h6 {
+                    color: #fff;
+                }
+            </style>
+        </head>
+        <body>
+            \(content)
+        </body>
+        </html>
+        """
     }
 }

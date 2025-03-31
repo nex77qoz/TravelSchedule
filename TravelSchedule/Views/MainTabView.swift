@@ -6,7 +6,7 @@ struct MainTabView: View {
     
     @State private var navPath: [ViewsChanger] = []
     @State private var direction: Int = .departure
-    @State private var stories: [Story] = Story.sampleData
+    @State private var stories: [Story] = Story.mockData
     
     var body: some View {
         NavigationStack(path: $navPath) {

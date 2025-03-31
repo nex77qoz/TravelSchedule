@@ -1,13 +1,14 @@
 import SwiftUI
 
 struct CityView: View {
+    // MARK: - Свойства
     @Binding var schedule: Schedule
     @Binding var navPath: [ViewsChanger]
     @Binding var direction: Int
 
     @State private var searchString = String()
 
-    // Результаты поиска по названию города (если строка поиска не пуста)
+    // MARK: - Результаты поиска
     private var searchingResults: [City] {
         searchString.isEmpty
             ? schedule.cities
@@ -16,14 +17,14 @@ struct CityView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Поисковая строка
+            // MARK: - Поисковая строка
             SearchBarView(searchText: $searchString)
 
-            // Отображение, если ничего не найдено
+            // MARK: - Отображение результатов поиска
             if searchingResults.isEmpty {
                 EmptySearchView(notification: "Город не найден")
             } else {
-                // Список результатов
+                // MARK: - Список найденных городов
                 ScrollView(.vertical) {
                     ForEach(searchingResults) { city in
                         NavigationLink(value: ViewsChanger.stationView) {

@@ -23,4 +23,7 @@ extension Image {
 
     // Картинка для отображения ошибки сервера
     static let imageServerError = Image("xmark.circle.fill")
+    
+    // Прочие иконки
+    static let cancel = Image(systemName: "xmark.circle.fill").renderingMode(.template)
 }

@@ -1,19 +1,18 @@
 import SwiftUI
 
 struct MainSearchView: View {
+    // MARK: - Свойства
     @Binding var schedule: Schedule
     @Binding var navPath: [ViewsChanger]
     @Binding var direction: Int
 
     private let dummyDirection = ["Откуда", "Куда"]
 
-    // Проверка, заполнено ли направление "откуда"
     private var isDepartureReady: Bool {
         !schedule.destinations[.departure].cityTitle.isEmpty &&
         !schedule.destinations[.departure].stationTitle.isEmpty
     }
 
-    // Проверка, заполнено ли направление "куда"
     private var isArrivalReady: Bool {
         !schedule.destinations[.arrival].cityTitle.isEmpty &&
         !schedule.destinations[.arrival].stationTitle.isEmpty
@@ -23,12 +22,14 @@ struct MainSearchView: View {
         !(isDepartureReady && isArrivalReady)
     }
 
+    // MARK: - Интерфейс
     var body: some View {
         ZStack {
             Color.ypWhiteDuo
                 .ignoresSafeArea()
 
             VStack {
+                // MARK: - Выбор направления
                 HStack(spacing: 16) {
                     VStack(alignment: .leading, spacing: 0) {
                         ForEach(0 ..< 2) { item in
@@ -78,6 +79,7 @@ struct MainSearchView: View {
                 .padding(.top, .spacerXL)
                 .padding(.horizontal, .spacerL)
 
+                // MARK: - Кнопка поиска
                 NavigationLink(value: ViewsChanger.routeView) {
                     Text("Найти")
                         .font(.boldSmall)

@@ -116,6 +116,7 @@ paths:
         - $ref: '#/components/parameters/resultTimezoneParam'
         - $ref: '#/components/parameters/addDaysMaskParam'
         - $ref: '#/components/parameters/transfersParam'
+          required: true
       responses:
         '200':
           description: success
@@ -332,7 +333,7 @@ components:
       in: query
       description: радиус охвата
       schema:
-        type: integer
+        type: number
 
     dateParam:
       name: date
@@ -388,7 +389,7 @@ components:
       in: query
       description: код перевозчика
       schema:
-        type: string
+        type: integer
 
     directionParam:
       name: direction
@@ -615,6 +616,8 @@ components:
         arrival:
           type: string
           nullable: true
+        departure:
+          type: string
         from:
           $ref: '#/components/schemas/Station'
         thread:
@@ -754,7 +757,7 @@ components:
       type: object
       properties:
         code:
-          type: number
+          type: integer
         codes:
           $ref: '#/components/schemas/CarrierCodes'
         title:
@@ -929,10 +932,12 @@ components:
     SettlementsStations:
       type: object
       properties:
+        code:
+          type: string
         direction:
           type: string
         codes:
-          $ref: '#/components/schemas/Carrier'
+          $ref: '#/components/schemas/StationCodes'
         station_type:
           type: string
         title:

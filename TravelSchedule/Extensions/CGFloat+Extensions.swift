@@ -3,12 +3,12 @@ import Foundation
 extension CGFloat {
     static let iconSize = 17.0
 
-    static let spacerXS = 4.0
+    static let XS = 4.0
     static let progressBar = 6.0
-    static let spacerS = 8.0
-    static let spacerM = 12.0
-    static let spacerL = 16.0
-    static let spacerXL = 20.0
-    static let spacerXXL = 24.0
+    static let S = 8.0
+    static let M = 12.0
+    static let L = 16.0
+    static let XL = 20.0
+    static let XXL = 24.0
     static let button = 36.0
 }

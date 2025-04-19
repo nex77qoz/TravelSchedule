@@ -5,7 +5,7 @@ struct ThreadsScreen: View {
     @ObservedObject var viewModel: ThreadsScreenViewModel
 
     var body: some View {
-        VStack(spacing: .zero) {
+        VStack(spacing: 0) {
             titleView
             switch viewModel.state {
                 case .loading:
@@ -18,21 +18,19 @@ struct ThreadsScreen: View {
         }
         .padding(.horizontal, .L)
         .setCustomNavigationBar()
-        .task {
-            await fetchData()
-        }
-        .sheet(isPresented: $isError, onDismiss: {
-            isError = false
-        }, content: {
+        .task { await fetchData() }
+        .sheet(isPresented: $isError, onDismiss: { isError = false }) {
             ErrorView(errorType: viewModel.currentError)
-        })
+        }
     }
 }
 
 private extension ThreadsScreen {
     var titleView: some View {
-        VStack(alignment: .leading, spacing: .zero) {
-            (Text(viewModel.departure) + Text(Image.iconArrow).baselineOffset(-1) + Text(viewModel.arrival))
+        VStack(alignment: .leading, spacing: 0) {
+            (Text(viewModel.departure)
+             + Text(Image.iconArrow).baselineOffset(-1)
+             + Text(viewModel.arrival))
                 .font(.boldMedium)
         }
     }
@@ -41,16 +39,20 @@ private extension ThreadsScreen {
         Spacer()
             .overlay {
                 ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: .ypBlackDuo))
+                    .progressViewStyle(
+                        CircularProgressViewStyle(tint: Color.ypBlackDuo)
+                    )
             }
     }
 
     var emptyView: some View {
-        SearchResultEmptyView(notification: viewModel.notification)
+        SearchResultEmptyView(
+            notification: ThreadsScreenViewModel.Constants.notification
+        )
     }
 
     var routesList: some View {
-        VStack(spacing: .zero) {
+        VStack(spacing: 0) {
             routesView
             Spacer()
             buttonView
@@ -60,11 +62,20 @@ private extension ThreadsScreen {
     var routesView: some View {
         ScrollView(.vertical, showsIndicators: false) {
             ForEach(viewModel.filteredRoutes) { route in
-                if let carrier = viewModel.carriers.first(where: { $0.code == route.carrierCode }) {
+                if let carrier = viewModel.carriers.first(
+                    where: { $0.code == route.carrierCode }
+                ) {
                     NavigationLink {
-                        CarrierView(carrier: carrier, imageDownloader: viewModel.imageDownloader)
+                        CarrierView(
+                            carrier: carrier,
+                            imageDownloader: viewModel.imageDownloader
+                        )
                     } label: {
-                        ThreadView(route: route, carrier: carrier, imageDownloader: viewModel.imageDownloader)
+                        ThreadView(
+                            route: route,
+                            carrier: carrier,
+                            imageDownloader: viewModel.imageDownloader
+                        )
                     }
                 }
             }
@@ -82,7 +93,7 @@ private extension ThreadsScreen {
 
     var buttonTitleView: some View {
         HStack(alignment: .center, spacing: .S) {
-            Text(viewModel.buttonTitle)
+            Text(ThreadsScreenViewModel.Constants.buttonTitle)
             markerView
         }
         .setCustomButton(padding: .top)
@@ -94,7 +105,7 @@ private extension ThreadsScreen {
             .scaledToFit()
             .frame(width: .S, height: .S)
             .foregroundStyle(
-                viewModel.filter == Filter.fullSearch ? Color.ypBlue : Color.ypRed
+                viewModel.filter == .fullSearch ? Color.ypBlue : Color.ypRed
             )
     }
 }
@@ -117,7 +128,9 @@ private extension ThreadsScreen {
             viewModel: ThreadsScreenViewModel(
                 destinations: Destination.mockData,
                 routes: Thread.mockData,
-                routesDownloader: ThreadDownloader(networkServiceInstance: NetworkService()),
+                routesDownloader: ThreadDownloader(
+                    networkServiceInstance: NetworkService()
+                ),
                 imageDownloader: ImageDownloader()
             )
         )

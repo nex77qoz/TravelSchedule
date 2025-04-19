@@ -2,7 +2,7 @@ import SwiftUI
 
 struct RadioButtonToggleStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
-        HStack(spacing: .zero) {
+        HStack(spacing: 0) {
             configuration.label
             Spacer()
             (configuration.isOn ? Image.iconRadioOn : Image.iconRadioOff)

@@ -1,18 +1,18 @@
 import SwiftUI
 
 struct SetCustomNavBackButton: ViewModifier {
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.dismiss) private var dismiss
 
-    @ViewBuilder
-    @MainActor
+    private enum Constants {
+        static let verticalTolerance: CGFloat = 30
+    }
+
     func body(content: Content) -> some View {
         content
             .navigationBarBackButtonHidden(true)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        dismiss()
-                    } label: {
+                    Button(action: dismiss.callAsFunction) {
                         Image.iconBackward
                             .imageScale(.large)
                             .foregroundStyle(Color.ypBlackDuo)
@@ -25,9 +25,8 @@ struct SetCustomNavBackButton: ViewModifier {
             .gesture(
                 DragGesture(coordinateSpace: .local)
                     .onEnded { value in
-                        if value.translation.width > .zero
-                            && value.translation.height > -30
-                            && value.translation.height < 30 {
+                        if value.translation.width > 0,
+                           abs(value.translation.height) < Constants.verticalTolerance {
                             dismiss()
                         }
                     }

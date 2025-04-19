@@ -6,7 +6,7 @@ struct SearchScreen: View {
     @ObservedObject var viewModel: SearchScreenViewModel
 
     var body: some View {
-        VStack(spacing: .zero) {
+        VStack(spacing: 0) {
             PreviewStoriesView()
             MainSearchView(
                 navPath: $navPath,

@@ -1,67 +1,60 @@
 import SwiftUI
 
 struct SearchBarView: View {
-    private let cornerRadius = 10.0
-    private let padding = CGFloat(.L)
-    private let height = 36.0
-    private let iconSize = 17.0
-    private let iconPadding = CGFloat(.S)
-    private let placeholder = "Введите запрос"
-
     @Binding var searchText: String
-    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.colorScheme) private var colorScheme
+
+    private enum Constants {
+        static let cornerRadius: CGFloat = 10
+        static let horizontalPadding: CGFloat = .L
+        static let barHeight: CGFloat = 36
+        static let iconPadding: CGFloat = .S
+        static let placeholder = "Введите запрос"
+    }
 
     var body: some View {
-        HStack(spacing: .zero) {
+        HStack(spacing: 0) {
             searchIcon
-            searchTextField
-            if !searchText.isEmpty {
-                cancelButton
-            }
+            searchField
+            if !searchText.isEmpty { cancelButton }
         }
-        .frame(height: height)
+        .frame(height: Constants.barHeight)
         .background(colorScheme == .light ? Color.ypLightGray : Color.ypDarkGray)
-        .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
-        .padding(.horizontal, padding)
+        .clipShape(RoundedRectangle(cornerRadius: Constants.cornerRadius))
+        .padding(.horizontal, Constants.horizontalPadding)
     }
 }
 
 private extension SearchBarView {
     var searchIcon: some View {
-        show(icon: Image.iconSearching)
+        icon(Image.iconSearching)
             .foregroundStyle(searchText.isEmpty ? Color.ypGray : Color.ypBlackDuo)
     }
 
-    var searchTextField: some View {
-        TextField(placeholder, text: $searchText)
+    var searchField: some View {
+        TextField(Constants.placeholder, text: $searchText)
             .font(.regMedium)
             .foregroundStyle(Color.ypBlackDuo)
             .autocorrectionDisabled(true)
             .autocapitalization(.none)
     }
 
-    @MainActor
     var cancelButton: some View {
-        Button {
-            cancelSearching()
-        } label: {
-            show(icon: Image.iconSearchCancel)
+        Button { cancelSearch() } label: {
+            icon(Image.iconSearchCancel)
                 .foregroundStyle(Color.ypGray)
         }
     }
-}
 
-private extension SearchBarView {
-    func show(icon: Image) -> some View {
-        icon
+    func icon(_ image: Image) -> some View {
+        image
             .resizable()
-            .frame(width: iconSize, height: iconSize)
-            .padding(.horizontal, iconPadding)
+            .frame(width: .iconSize, height: .iconSize)
+            .padding(.horizontal, Constants.iconPadding)
     }
 
-    @MainActor
-    func cancelSearching() {
-        searchText = String()
+    func cancelSearch() {
+        searchText = ""
         UIApplication.shared.sendAction(
             #selector(UIResponder.resignFirstResponder),
             to: nil,
@@ -72,18 +65,8 @@ private extension SearchBarView {
 }
 
 #Preview {
-    VStack {
-        VStack {
-            SearchBarView(searchText: .constant(""))
-            SearchBarView(searchText: .constant("some text"))
-        }
-        .environment(\.colorScheme, .light)
-        .padding(.vertical, 44)
-
-        VStack {
-            SearchBarView(searchText: .constant(""))
-            SearchBarView(searchText: .constant("some text"))
-        }
-        .environment(\.colorScheme, .dark)
+    VStack(spacing: .XL) {
+        SearchBarView(searchText: .constant(""))
+        SearchBarView(searchText: .constant("some text"))
     }
 }

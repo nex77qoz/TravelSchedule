@@ -6,15 +6,15 @@ struct CityView: View {
     @ObservedObject var viewModel: CityViewViewModel
 
     var body: some View {
-        VStack(spacing: .zero) {
+        VStack(spacing: 0) {
             SearchBarView(searchText: $viewModel.searchString)
 
             if viewModel.filteredCities.isEmpty {
-                SearchResultEmptyView(notification: viewModel.notification)
+                SearchResultEmptyView(notification: CityViewViewModel.Constants.notification)
                 Spacer()
             } else {
                 ScrollView(.vertical, showsIndicators: false) {
-                    LazyVStack(spacing: .zero) {
+                    LazyVStack(spacing: 0) {
                         ForEach(viewModel.filteredCities) { city in
                             NavigationLink(value: ViewsChanger.stationView) {
                                 RowView(title: city.title)
@@ -31,16 +31,16 @@ struct CityView: View {
                 }
             }
         }
-        .setCustomNavigationBar(title: viewModel.title)
+        .setCustomNavigationBar(title: CityViewViewModel.Constants.title)
         .foregroundStyle(Color.ypBlackDuo)
         .task {
-            viewModel.searchString = String()
+            viewModel.searchString = ""
             viewModel.fetchCities()
         }
         .overlay {
             if viewModel.state == .loading {
                 ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: .ypBlackDuo))
+                    .progressViewStyle(CircularProgressViewStyle(tint: Color.ypBlackDuo))
             }
         }
     }

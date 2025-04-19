@@ -3,22 +3,27 @@ import SwiftUI
 @MainActor
 final class StationScreenViewModel: ObservableObject {
     enum State: Equatable {
-        case loading, loaded
+        case loading
+        case loaded
     }
+
     let title = "Выбор станции"
     let notification = "Станция не найдена"
 
-    @Published var searchString = String()
-    @Published private (set) var state: State = .loading
+    @Published var searchString = ""
+    @Published private(set) var state: State = .loading
 
     var filteredStations: [Station] {
-        searchString.isEmpty
-            ? stations
-            : stations.filter { $0.title.lowercased().contains(searchString.lowercased()) }
+        if searchString.isEmpty {
+            return stations
+        }
+        return stations.filter {
+            $0.title.localizedCaseInsensitiveContains(searchString)
+        }
     }
 
-    private var store: [Components.Schemas.Settlements]
-    private var city: City
+    private let store: [Components.Schemas.Settlements]
+    private let city: City
     private var stations: [Station]
 
     init(
@@ -32,69 +37,66 @@ final class StationScreenViewModel: ObservableObject {
     }
 
     func fetchStations() {
-        Task {
+        Task { [store, city] in
             state = .loading
-            var convertedStations: [Station] = []
-            store.forEach {
-                if $0.codes?.yandex_code == city.yandexCode {
-                    $0.stations?.forEach { settlementStation in
-                        guard let station = convert(from: settlementStation) else { return }
-                        convertedStations.append(station)
-                    }
-                }
-            }
-            stations = sortByType(for: convertedStations)
+            let converted = store
+                .filter { $0.codes?.yandex_code == city.yandexCode }
+                .flatMap { $0.stations ?? [] }
+                .compactMap(convert)
+            stations = sortStationsByType(converted)
             state = .loaded
         }
     }
 }
 
 private extension StationScreenViewModel {
-    func sortByType(for stations: [Station]) -> [Station] {
-        let sortedStations = stations.sorted { $0.title < $1.title }
-        var customSortedStations = sortedStations.filter { $0.type == "airport" }
-        customSortedStations += sortedStations.filter { $0.type == "train_station" }
-        customSortedStations += sortedStations.filter { $0.type == "marine_station" }
-        customSortedStations += sortedStations.filter { $0.type == "river_port" }
-        customSortedStations += sortedStations.filter { $0.type == "bus_station" }
-        let otherSortedStations = sortedStations.difference(from: customSortedStations)
-        return [customSortedStations, otherSortedStations].flatMap { $0 }
+    func sortStationsByType(_ list: [Station]) -> [Station] {
+        let sorted = list.sorted { $0.title < $1.title }
+        let priority = ["airport", "train_station", "marine_station", "river_port", "bus_station"]
+        var result: [Station] = []
+        for type in priority {
+            result += sorted.filter { $0.type == type }
+        }
+        let rest = sorted.filter { !priority.contains($0.type) }
+        return result + rest
     }
 
-    func convert(from station: Components.Schemas.SettlementsStations) -> Station? {
+    func convert(from item: Components.Schemas.SettlementsStations) -> Station? {
         guard
-            let type = station.station_type,
-            let titleRawValue = station.title,
-            let code = station.codes?.yandex_code,
-            let longitudeRawValue = station.longitude,
-            let latitudeRawValue = station.latitude else { return nil }
-        let latitude = extract(latitude: latitudeRawValue)
-        let longitude = extract(longitude: longitudeRawValue)
-        if latitude == 0 && longitude == 0 { return nil }
+            let rawType = item.station_type,
+            let rawTitle = item.title,
+            let code = item.codes?.yandex_code,
+            let latPayload = item.latitude,
+            let lonPayload = item.longitude,
+            let latitude = extract(latPayload),
+            let longitude = extract(lonPayload),
+            latitude != 0,
+            longitude != 0
+        else { return nil }
+
+        let title = rawType == "airport"
+            ? "Аэропорт \(rawTitle)"
+            : rawTitle
         return Station(
-            title: type == "airport" ? ["Аэропорт", titleRawValue].joined(separator: " ") : titleRawValue,
-            type: type,
+            title: title,
+            type: rawType,
             code: code,
             latitude: latitude,
             longitude: longitude
         )
     }
 
-    func extract(longitude: Components.Schemas.SettlementsStations.longitudePayload) -> Double {
-        var coordinate: Double = 0
-        switch longitude {
-            case .case1(let doubleValue): coordinate = doubleValue
-            case .case2: break
+    func extract(_ payload: Components.Schemas.SettlementsStations.latitudePayload) -> Double? {
+        switch payload {
+        case .case1(let value): return value
+        case .case2: return nil
         }
-        return coordinate
     }
 
-    func extract(latitude: Components.Schemas.SettlementsStations.latitudePayload) -> Double {
-        var coordinate: Double = 0
-        switch latitude {
-            case .case1(let doubleValue): coordinate = doubleValue
-            case .case2: break
+    func extract(_ payload: Components.Schemas.SettlementsStations.longitudePayload) -> Double? {
+        switch payload {
+        case .case1(let value): return value
+        case .case2: return nil
         }
-        return coordinate
     }
 }

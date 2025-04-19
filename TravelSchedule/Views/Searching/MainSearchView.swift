@@ -1,42 +1,57 @@
 import SwiftUI
 
 struct MainSearchView: View {
-    private let searchButtonTitle = "Найти"
-    private let dummyDirection = ["Откуда", "Куда"]
-
     @Binding var navPath: [ViewsChanger]
     @ObservedObject var rootViewModel: MainViewModel
     @ObservedObject var viewModel: SearchScreenViewModel
 
     var body: some View {
-        searchWidget
-        if viewModel.isSearchButtonReady {
-            searchButton
+        VStack(spacing: 0) {
+            searchWidget
+            if viewModel.isSearchButtonReady {
+                NavigationLink(value: ViewsChanger.threadView) {
+                    Text(Constants.searchButtonTitle)
+                        .setCustomButton(width: 150, padding: .all)
+                }
+                .padding(.top, .M)
+            }
+            Spacer()
         }
-        Spacer()
     }
 }
 
-// MARK: - Private views
 private extension MainSearchView {
+    enum Constants {
+        static let searchButtonTitle = "Найти"
+        static let dummyDirection = ["Откуда", "Куда"]
+        static let widgetSpacing: CGFloat = .L
+        static let widgetPadding: CGFloat = .L
+        static let widgetTopPadding: CGFloat = .XL
+        static let widgetHeight: CGFloat = 128
+        static let cornerRadius: CGFloat = .XL
+        static let swapButtonSize: CGFloat = 36
+        static let destinationsSpacing: CGFloat = 0
+        static let destinationHeight: CGFloat = 128
+    }
+
     var searchWidget: some View {
-        HStack(alignment: .center, spacing: .L) {
+        HStack(alignment: .center, spacing: Constants.widgetSpacing) {
             destinationsList
             swapButton
         }
-        .padding(.L)
+        .padding(Constants.widgetPadding)
         .background(Color.ypBlue)
-        .clipShape(RoundedRectangle(cornerRadius: .XL))
-        .frame(height: 128.0)
-        .padding(.top, .XL)
-        .padding(.horizontal, .L)
+        .clipShape(RoundedRectangle(cornerRadius: Constants.cornerRadius))
+        .frame(height: Constants.widgetHeight)
+        .padding(.top, Constants.widgetTopPadding)
+        .padding(.horizontal, Constants.widgetPadding)
     }
 
     var swapButton: some View {
         ZStack {
             Circle()
                 .foregroundStyle(Color.ypWhite)
-                .frame(width: 36.0)
+                .frame(width: Constants.swapButtonSize)
             Button {
                 viewModel.swapDestinations()
             } label: {
@@ -46,25 +61,20 @@ private extension MainSearchView {
         }
     }
 
-    var searchButton: some View {
-        NavigationLink(value: ViewsChanger.threadView) {
-            Text(searchButtonTitle)
-                .setCustomButton(width: 150.0, padding: .all)
-        }
-    }
-
     var destinationsList: some View {
         ZStack {
-            VStack(alignment: .leading, spacing: .zero) {
-                ForEach(Array(viewModel.destinations.enumerated()), id: \.offset) { index, destination in
+            VStack(alignment: .leading, spacing: Constants.destinationsSpacing) {
+                ForEach(viewModel.destinations.indices, id: \.self) { index in
+                    let destination = viewModel.destinations[index]
                     let city = destination.city.title
-                    let station = destination.station.title.isEmpty ? "" : " (" + destination.station.title + ")"
-                    let destinationLabel = city.isEmpty
-                    ? dummyDirection[index]
-                    : city + station
-                    return NavigationLink(value: ViewsChanger.cityView) {
+                    let stationTitle = destination.station.title
+                    let label = city.isEmpty
+                        ? Constants.dummyDirection[index]
+                        : city + (stationTitle.isEmpty ? "" : " (\(stationTitle))")
+
+                    NavigationLink(value: ViewsChanger.cityView) {
                         HStack {
-                            Text(destinationLabel)
+                            Text(label)
                                 .foregroundStyle(
                                     rootViewModel.state == .loading
                                     ? .clear
@@ -75,7 +85,7 @@ private extension MainSearchView {
                             Spacer()
                         }
                         .padding(.L)
-                        .frame(maxWidth: .infinity, maxHeight: 128.0)
+                        .frame(maxWidth: .infinity, maxHeight: Constants.destinationHeight)
                     }
                     .simultaneousGesture(
                         TapGesture()
@@ -84,10 +94,11 @@ private extension MainSearchView {
                 }
             }
             .background(Color.ypWhite)
-            .clipShape(RoundedRectangle(cornerRadius: .XL))
+            .clipShape(RoundedRectangle(cornerRadius: Constants.cornerRadius))
+
             if rootViewModel.state == .loading {
                 ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: .ypBlackDuo))
+                    .progressViewStyle(CircularProgressViewStyle(tint: Color.ypBlackDuo))
             }
         }
     }

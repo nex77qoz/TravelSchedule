@@ -4,28 +4,30 @@ struct RadioButtonView: View {
     @Binding var isOn: Bool
 
     var body: some View {
-        VStack(spacing: .zero) {
-            Toggle(RadioButtonState.on.title, isOn: $isOn)
-                .setRowElement()
-                .toggleStyle(.radioButton)
-
-            Toggle(RadioButtonState.off.title, isOn: $isOn.not)
-                .setRowElement()
-                .toggleStyle(.radioButton)
+        VStack(spacing: 0) {
+            radioButton(.on, binding: $isOn)
+            radioButton(.off, binding: $isOn.not)
         }
     }
 }
 
-extension RadioButtonView {
+private extension RadioButtonView {
     enum RadioButtonState {
         case on, off
 
         var title: String {
             switch self {
-                case .on: return String(localized: "Да")
+                case .on:  return String(localized: "Да")
                 case .off: return String(localized: "Нет")
             }
         }
+    }
+
+    @ViewBuilder
+    func radioButton(_ state: RadioButtonState, binding: Binding<Bool>) -> some View {
+        Toggle(state.title, isOn: binding)
+            .setRowElement()
+            .toggleStyle(.radioButton)
     }
 }
 

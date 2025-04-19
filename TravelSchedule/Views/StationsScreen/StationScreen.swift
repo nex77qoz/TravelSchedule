@@ -6,73 +6,43 @@ struct StationScreen: View {
     @ObservedObject var viewModel: StationScreenViewModel
 
     var body: some View {
-        VStack(spacing: .zero) {
-            searchBar
+        VStack(spacing: 0) {
+            SearchBarView(searchText: $viewModel.searchString)
+
             if viewModel.filteredStations.isEmpty {
-                emptyView
+                SearchResultEmptyView(notification: viewModel.notification)
             } else {
-                stationsList
+                ScrollView(.vertical, showsIndicators: false) {
+                    LazyVStack(spacing: 0) {
+                        ForEach(viewModel.filteredStations) { station in
+                            Button {
+                                destinationsViewModel.saveSelected(station: station)
+                                navPath.removeAll()
+                            } label: {
+                                RowView(title: station.title)
+                            }
+                            .setRowElement()
+                            .padding(.vertical, .L)
+                        }
+                    }
+                    .padding(.vertical, .L)
+                }
             }
+
             Spacer()
         }
         .setCustomNavigationBar(title: viewModel.title)
         .foregroundStyle(Color.ypBlackDuo)
         .task {
-            fetchData()
+            viewModel.searchString = ""
+            viewModel.fetchStations()
         }
         .overlay {
             if viewModel.state == .loading {
-                progressView
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: Color.ypBlackDuo))
             }
         }
-    }
-}
-
-private extension StationScreen {
-    var searchBar: some View {
-        SearchBarView(searchText: $viewModel.searchString)
-    }
-
-    var emptyView: some View {
-        SearchResultEmptyView(notification: viewModel.notification)
-    }
-
-    var stationsList: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            LazyVStack(spacing: .zero) {
-                ForEach(viewModel.filteredStations) { station in
-                    Button {
-                        saveSelected(station: station)
-                    } label: {
-                        RowView(title: station.title)
-                    }
-                    .setRowElement()
-                    .padding(.vertical, .L)
-                }
-            }
-            .padding(.vertical, .L)
-        }
-    }
-
-    var progressView: some View {
-        ProgressView()
-            .progressViewStyle(CircularProgressViewStyle(tint: .ypBlackDuo))
-    }
-}
-
-private extension StationScreen {
-    func saveSelected(station: Station) {
-        destinationsViewModel.saveSelected(station: station)
-        returnToRoot()
-    }
-
-    func returnToRoot() {
-        navPath.removeAll()
-    }
-
-    func fetchData() {
-        viewModel.searchString = String()
-        viewModel.fetchStations()
     }
 }
 

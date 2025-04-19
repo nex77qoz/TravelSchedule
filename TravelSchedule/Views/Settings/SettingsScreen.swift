@@ -4,7 +4,7 @@ struct SettingsScreen: View {
     @EnvironmentObject var viewModel: SettingsViewModel
 
     var body: some View {
-        VStack(spacing: .zero) {
+        VStack(spacing: 0) {
             switchView
             agreementView
             Spacer()
@@ -16,14 +16,8 @@ struct SettingsScreen: View {
 }
 
 private extension SettingsScreen {
-    enum Titles {
-        static let darkMode = "Тёмная тема"
-        static let agreement = "Пользовательское соглашение"
-        static let version = "Версия \(Bundle.main.appVersionLong).\(Bundle.main.appBuild)"
-    }
-
     var switchView: some View {
-        Toggle(Titles.darkMode, isOn: $viewModel.darkMode)
+        Toggle(SettingsViewModel.Titles.darkMode, isOn: $viewModel.darkMode)
             .setRowElement()
             .tint(Color.ypBlue)
     }
@@ -32,7 +26,7 @@ private extension SettingsScreen {
             NavigationLink {
                 AgreementView(darkMode: viewModel.darkMode)
             } label: {
-                RowView(title: Titles.agreement)
+                RowView(title: SettingsViewModel.Titles.agreement)
             }
             .setRowElement()
         }
@@ -40,7 +34,7 @@ private extension SettingsScreen {
     var footerView: some View {
         VStack(alignment: .center, spacing: .L) {
             Text(viewModel.copyrightInfo)
-            Text(Titles.version)
+            Text(SettingsViewModel.Titles.version)
         }
         .font(.regSmall)
         .frame(minHeight: 44.0)

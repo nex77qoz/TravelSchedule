@@ -1,63 +1,61 @@
 import SwiftUI
 
 struct FilterView: View {
-    private let timeSectionTitle = "Время отправления"
-    private let connectionSectionTitle = "Показывать варианты с пересадками"
-    private let buttonTitle = "Применить"
-
     @Binding var viewModelFilter: Filter
-    @State var currentFilter = Filter()
+    @State private var currentFilter = Filter()
 
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.dismiss) private var dismiss
+
+    private enum Constants {
+        static let timeSectionTitle       = "Время отправления"
+        static let connectionSectionTitle = "Показывать варианты с пересадками"
+        static let buttonTitle            = "Применить"
+    }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: .zero) {
-            timeSectionView
-            connectionSectionView
+        VStack(alignment: .leading, spacing: 0) {
+            timeSection
+            connectionSection
             Spacer()
             if currentFilter != viewModelFilter {
-                buttonView
+                applyButton
             }
         }
         .setCustomNavigationBar()
-        .onAppear {
-            loadFilter()
-        }
+        .onAppear(perform: loadFilter)
     }
 }
 
 private extension FilterView {
-    var timeSectionView: some View {
-        VStack(alignment: .leading, spacing: .zero) {
-            show(title: timeSectionTitle)
-            CheckboxView(type: .morning, isOn: $currentFilter.isAtMorning)
-            CheckboxView(type: .afternoon, isOn: $currentFilter.isAtAfternoon)
-            CheckboxView(type: .evening, isOn: $currentFilter.isAtEvening)
-            CheckboxView(type: .night, isOn: $currentFilter.isAtNight)
+    var timeSection: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            sectionTitle(Constants.timeSectionTitle)
+            CheckboxView(type: .morning,  isOn: $currentFilter.isAtMorning)
+            CheckboxView(type: .afternoon,isOn: $currentFilter.isAtAfternoon)
+            CheckboxView(type: .evening,  isOn: $currentFilter.isAtEvening)
+            CheckboxView(type: .night,    isOn: $currentFilter.isAtNight)
         }
     }
 
-    var connectionSectionView: some View {
-        VStack(alignment: .leading, spacing: .zero) {
-            show(title: connectionSectionTitle)
+    var connectionSection: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            sectionTitle(Constants.connectionSectionTitle)
             RadioButtonView(isOn: $currentFilter.isWithTransfers)
         }
     }
 
-    var buttonView: some View {
+    var applyButton: some View {
         Button {
             saveFilter()
-            self.presentationMode.wrappedValue.dismiss()
+            dismiss()
         } label: {
-            Text(buttonTitle)
+            Text(Constants.buttonTitle)
                 .setCustomButton(padding: .horizontal)
         }
     }
-}
 
-private extension FilterView {
-    func show(title: String) -> some View {
-        Text(title)
+    func sectionTitle(_ text: String) -> some View {
+        Text(text)
             .font(.boldMedium)
             .padding(.L)
     }

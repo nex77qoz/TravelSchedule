@@ -7,12 +7,12 @@ struct ThreadView: View {
     @State private (set) var carrierIcon = Image(systemName: "nosign.app")
 
     var body: some View {
-        VStack(spacing: .zero) {
+        VStack(spacing: 0) {
             ThreadCarrierView(route: route, carrier: carrier, carrierIcon: $carrierIcon)
             timelineView
         }
         .background(Color.ypLightGray)
-        .frame(maxWidth: .infinity, maxHeight: 104.0)
+        .frame(maxWidth: .infinity, maxHeight: 104)
         .clipShape(RoundedRectangle(cornerRadius: .XXL))
         .task {
             let placeholderLogo = Image(systemName: carrier.placeholder)
@@ -25,7 +25,7 @@ struct ThreadView: View {
 
 private extension ThreadView {
     var timelineView: some View {
-        HStack(spacing: .zero) {
+        HStack(spacing: 0) {
             timeDetailsView(field: .left, title: route.departureTime)
             Spacer()
             timeDetailsView(field: .center, title: route.durationTime)
@@ -43,12 +43,10 @@ private extension ThreadView {
 
     var lineView: some View {
         Rectangle()
-            .frame(height: 1.0)
+            .frame(height: 1)
             .foregroundStyle(Color.ypGray)
     }
-}
 
-private extension ThreadView {
     func timeDetailsView(field: FieldPosition, title: String) -> some View {
         Text(title)
             .font(field == .center ? .regSmall : .regMedium)

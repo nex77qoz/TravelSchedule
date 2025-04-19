@@ -2,7 +2,7 @@ import SwiftUI
 
 struct CheckboxToggleStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
-        HStack(spacing: .zero) {
+        HStack(spacing: 0) {
             configuration.label
             Spacer()
             (configuration.isOn ? Image.iconCheckboxOn : Image.iconCheckboxOff)

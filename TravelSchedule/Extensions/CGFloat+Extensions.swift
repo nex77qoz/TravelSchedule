@@ -2,6 +2,7 @@ import Foundation
 
 extension CGFloat {
     static let iconSize = 17.0
+    static let logoSize = 38.0
 
     static let XS = 4.0
     static let progressBar = 6.0
@@ -11,4 +12,5 @@ extension CGFloat {
     static let XL = 20.0
     static let XXL = 24.0
     static let button = 36.0
+
 }

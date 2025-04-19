@@ -2,6 +2,12 @@ import SwiftUI
 
 @MainActor
 final class SettingsViewModel: ObservableObject {
+    enum Titles {
+        static let darkMode = "Тёмная тема"
+        static let agreement = "Пользовательское соглашение"
+        static let version = "Версия \(Bundle.main.appVersionLong).\(Bundle.main.appBuild)"
+    }
+
     @AppStorage("DarkMode") var darkMode: Bool = false {
         willSet {
             objectWillChange.send()
@@ -9,12 +15,6 @@ final class SettingsViewModel: ObservableObject {
     }
 
     @Published var copyrightInfo = String()
-
-    enum Titles {
-        static let darkMode = "Тёмная тема"
-        static let agreement = "Пользовательское соглашение"
-        static let version = "Версия \(Bundle.main.appVersionLong).\(Bundle.main.appBuild)"
-    }
 
     private let networkService: NetworkService
 

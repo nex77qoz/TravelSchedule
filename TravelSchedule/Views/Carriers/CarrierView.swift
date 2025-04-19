@@ -1,22 +1,27 @@
 import SwiftUI
 
 struct CarrierView: View {
-    private let title = "Информация о перевозчике"
     @State var carrier: Carrier
     var imageDownloader: ImageDownloader
     @Environment(\.openURL) private var openURL
 
+    private enum Constants {
+        static let title: String = "Информация о перевозчике"
+        static let imageHeight: CGFloat = 104
+        static let cornerRadius: CGFloat = .XXL
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: .L) {
-            imageView
-            titleView
-            contactRow(type: .email, info: carrier.email)
-            contactRow(type: .phone, info: carrier.phone)
-            contactRow(type: .contacts, info: carrier.contacts)
+            logoView
+            headerView
+            contactRow(.email, info: carrier.email)
+            contactRow(.phone, info: carrier.phone)
+            contactRow(.contacts, info: carrier.contacts)
             Spacer()
         }
         .padding(.horizontal, .L)
-        .setCustomNavigationBar(title: title)
+        .setCustomNavigationBar(title: Constants.title)
     }
 }
 
@@ -26,44 +31,39 @@ private extension CarrierView {
 
         var title: String {
             switch self {
-                case .email: "E-mail"
-                case .phone: "Телефон"
-                case .contacts: "Контакты"
+                case .email:    return "E-mail"
+                case .phone:    return "Телефон"
+                case .contacts: return "Контакты"
             }
         }
 
-        var urlScheme: String? {
+        var scheme: String? {
             switch self {
-                case .email: return "mailto:"
-                case .phone: return "tel:"
+                case .email:    return "mailto:"
+                case .phone:    return "tel:"
                 case .contacts: return nil
             }
         }
     }
 
-    var imageView: some View {
+    var logoView: some View {
         AsyncImage(url: URL(string: carrier.logoUrl)) { image in
-            image
+            image.resizable().scaledToFit()
+        } placeholder: {
+            Image(systemName: carrier.placeholder)
+                .renderingMode(.template)
                 .resizable()
                 .scaledToFit()
-        } placeholder: {
-            placeholderImageView
+                .frame(maxHeight: Constants.imageHeight / 2)
+                .padding(.vertical, Constants.imageHeight / 4)
+                .foregroundStyle(Color.ypBlackDuo)
         }
-        .frame(maxWidth: .infinity, maxHeight: 104.0)
+        .frame(maxWidth: .infinity, maxHeight: Constants.imageHeight)
         .background(Color.ypWhite)
-        .clipShape(RoundedRectangle(cornerRadius: .XXL))
+        .clipShape(RoundedRectangle(cornerRadius: Constants.cornerRadius))
     }
 
-    var placeholderImageView: some View {
-        Image(systemName: carrier.placeholder)
-            .renderingMode(.template)
-            .resizable()
-            .scaledToFit()
-            .frame(maxWidth: .infinity, maxHeight: 104.0 / 2)
-            .padding(.vertical, 104.0 / 4)
-    }
-
-    var titleView: some View {
+    var headerView: some View {
         Text(carrier.title)
             .font(.boldMedium)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -72,17 +72,14 @@ private extension CarrierView {
     }
 
     @ViewBuilder
-    func contactRow(type: ContactType, info: String) -> some View {
+    func contactRow(_ type: ContactType, info: String) -> some View {
         if !info.isEmpty {
-            VStack(alignment: .leading, spacing: .zero) {
+            VStack(alignment: .leading, spacing: 0) {
                 Text(type.title)
                     .font(.regMedium)
                     .foregroundStyle(Color.ypBlackDuo)
-
-                if let urlScheme = type.urlScheme, let url = URL(string: urlScheme + info) {
-                    Button {
-                        openURL(url)
-                    } label: {
+                if let scheme = type.scheme, let url = URL(string: scheme + info) {
+                    Button { openURL(url) } label: {
                         Text(info)
                             .font(.regSmall)
                             .foregroundStyle(Color.ypBlackDuo)

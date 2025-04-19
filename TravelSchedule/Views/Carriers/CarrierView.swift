@@ -7,12 +7,12 @@ struct CarrierView: View {
     @Environment(\.openURL) private var openURL
 
     var body: some View {
-        VStack(alignment: .leading, spacing: .zero) {
+        VStack(alignment: .leading, spacing: .L) {
             imageView
             titleView
-            show(info: carrier.email, for: .email)
-            show(info: carrier.phone, for: .phone)
-            show(info: carrier.contacts, for: .contacts)
+            contactRow(type: .email, info: carrier.email)
+            contactRow(type: .phone, info: carrier.phone)
+            contactRow(type: .contacts, info: carrier.contacts)
             Spacer()
         }
         .padding(.horizontal, .L)
@@ -31,10 +31,15 @@ private extension CarrierView {
                 case .contacts: "Контакты"
             }
         }
+
+        var urlScheme: String? {
+            switch self {
+                case .email: return "mailto:"
+                case .phone: return "tel:"
+                case .contacts: return nil
+            }
+        }
     }
-    var carrierTitle: String { (carrier.title) }
-    var emailUrl: String { "mailto:" + carrier.email }
-    var phoneUrl: String { "tel:" + carrier.phone }
 
     var imageView: some View {
         AsyncImage(url: URL(string: carrier.logoUrl)) { image in
@@ -59,46 +64,35 @@ private extension CarrierView {
     }
 
     var titleView: some View {
-        Text(carrierTitle)
+        Text(carrier.title)
             .font(.boldMedium)
-            .frame(maxWidth: .infinity, maxHeight: 29.0, alignment: .leading)
-            .padding(.vertical, .L)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.top, .L)
+            .padding(.bottom, .S)
     }
-}
 
-private extension CarrierView {
-    func show(info: String, for type: ContactType) -> some View {
-        return VStack(alignment: .leading, spacing: .zero) {
-            show(header: type.title)
-            switch type {
-                case .email: showButton(for: .email)
-                case .phone: showButton(for: .phone)
-                case .contacts: show(info: carrier.contacts)
+    @ViewBuilder
+    func contactRow(type: ContactType, info: String) -> some View {
+        if !info.isEmpty {
+            VStack(alignment: .leading, spacing: .zero) {
+                Text(type.title)
+                    .font(.regMedium)
+                    .foregroundStyle(Color.ypBlackDuo)
+
+                if let urlScheme = type.urlScheme, let url = URL(string: urlScheme + info) {
+                    Button {
+                        openURL(url)
+                    } label: {
+                        Text(info)
+                            .font(.regSmall)
+                            .foregroundStyle(Color.ypBlackDuo)
+                    }
+                } else {
+                    Text(info)
+                        .font(.regSmall)
+                        .foregroundStyle(Color.ypBlackDuo)
+                }
             }
-        }.frame(height: type == .contacts ? 60.0 * 2 : 60.0)
-    }
-
-    func show(header: String) -> some View {
-        Text(header)
-            .font(.regMedium)
-            .foregroundStyle(Color.ypBlackDuo)
-    }
-
-    func show(info: String) -> some View {
-        VStack(spacing: .zero) {
-            Text(info)
-                .font(.regSmall)
-                .foregroundStyle(Color.ypBlackDuo)
-            Spacer()
-        }
-    }
-
-    func showButton(for type: ContactType) -> some View {
-        Button {
-            guard let url = URL(string: type == .email ? emailUrl : phoneUrl) else { return }
-            openURL(url)
-        } label: {
-            show(info: type == .email ? carrier.email : carrier.phone)
         }
     }
 }

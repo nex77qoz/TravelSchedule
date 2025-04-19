@@ -8,12 +8,28 @@ struct CityView: View {
     var body: some View {
         VStack(spacing: .zero) {
             SearchBarView(searchText: $viewModel.searchString)
+
             if viewModel.filteredCities.isEmpty {
-                emptyView
+                SearchResultEmptyView(notification: viewModel.notification)
+                Spacer()
             } else {
-                listView
+                ScrollView(.vertical, showsIndicators: false) {
+                    LazyVStack(spacing: .zero) {
+                        ForEach(viewModel.filteredCities) { city in
+                            NavigationLink(value: ViewsChanger.stationView) {
+                                RowView(title: city.title)
+                            }
+                            .simultaneousGesture(
+                                TapGesture()
+                                    .onEnded { destinationsViewModel.saveSelected(city: city) }
+                            )
+                            .setRowElement()
+                            .padding(.vertical, .L)
+                        }
+                    }
+                    .padding(.vertical, .L)
+                }
             }
-            Spacer()
         }
         .setCustomNavigationBar(title: viewModel.title)
         .foregroundStyle(Color.ypBlackDuo)
@@ -27,31 +43,6 @@ struct CityView: View {
                     .progressViewStyle(CircularProgressViewStyle(tint: .ypBlackDuo))
             }
         }
-    }
-}
-
-private extension CityView {
-    var emptyView: some View {
-        SearchResultEmptyView(notification: viewModel.notification)
-    }
-
-    var listView: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            LazyVStack(spacing: .zero) {
-                ForEach(viewModel.filteredCities) { city in
-                    NavigationLink(value: ViewsChanger.stationView) {
-                        RowView(title: city.title)
-                    }
-                    .simultaneousGesture(
-                        TapGesture()
-                            .onEnded { destinationsViewModel.saveSelected(city: city) }
-                    )
-                    .setRowElement()
-                    .padding(.vertical, .L)
-                }
-            }
-        }
-        .padding(.vertical, .L)
     }
 }
 

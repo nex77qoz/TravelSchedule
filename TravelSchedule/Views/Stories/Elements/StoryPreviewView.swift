@@ -1,46 +1,33 @@
 import SwiftUI
 
 struct StoryPreviewView: View {
-    private let titleLineLimit = 3
     var storyPreview: Story
 
     var body: some View {
-        ZStack(alignment: .bottomLeading) {
-            previewImage
-            title
-            border
-        }
-        .padding(.zero)
-        .frame(width: 92.0, height: 150.0)
-        .contentShape(RoundedRectangle(cornerRadius: .L))
-    }
-}
-
-private extension StoryPreviewView {
-    var previewImage: some View {
         Image(storyPreview.imageName)
             .resizable()
             .scaledToFill()
-            .frame(width: 92.0, height: 150.0)
+            .frame(width: 92, height: 150)
             .clipShape(RoundedRectangle(cornerRadius: .L))
             .opacity(storyPreview.isShowed ? .halfOpacity : .fullOpacity)
-    }
-
-    var title: some View {
-        Text(storyPreview.title)
-            .foregroundColor(Color.ypWhite)
-            .font(.regSmall)
-            .padding(.horizontal, .S)
-            .padding(.bottom, .M)
-            .lineLimit(titleLineLimit)
-    }
-
-    var border: some View {
-        RoundedRectangle(cornerRadius: .L)
-            .strokeBorder(
-                Color.ypBlue,
-                lineWidth: storyPreview.isShowed ? .zero : .XS
+            .overlay(
+                RoundedRectangle(cornerRadius: .L)
+                    .strokeBorder(
+                        Color.ypBlue,
+                        lineWidth: storyPreview.isShowed ? 0 : .XS
+                    )
             )
+            .overlay(
+                Text(storyPreview.title)
+                    .font(.regSmall)
+                    .foregroundColor(.ypWhite)
+                    .lineLimit(3)
+                    .padding(.horizontal, .S)
+                    .padding(.bottom, .M),
+                alignment: .bottomLeading
+            )
+            .frame(width: 92, height: 150)
+            .contentShape(RoundedRectangle(cornerRadius: .L))
     }
 }
 

@@ -9,7 +9,7 @@ final class CityViewViewModel: ObservableObject {
     let notification = "Город не найден"
 
     @Published var searchString = String()
-    @Published private (set) var state: State = .loading
+    @Published private(set) var state: State = .loading
 
     var filteredCities: [City] {
         searchString.isEmpty
@@ -31,19 +31,19 @@ final class CityViewViewModel: ObservableObject {
     func fetchCities() {
         Task {
             state = .loading
-            var convertedCities: [City] = []
-            store.forEach { settlement in
+            let convertedCities = store.compactMap { settlement -> City? in
                 guard
                     let title = settlement.title,
                     let settlementCodes = settlement.codes,
                     let yandexCode = settlementCodes.yandex_code,
-                    let settlementStations = settlement.stations else { return }
-                let city = City(
+                    let settlementStations = settlement.stations
+                else { return nil }
+
+                return City(
                     title: title,
                     yandexCode: yandexCode,
                     stationsCount: settlementStations.count
                 )
-                convertedCities.append(city)
             }
             cities = convertedCities.sorted { $0.stationsCount > $1.stationsCount }
             state = .loaded

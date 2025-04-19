@@ -4,56 +4,32 @@ struct StoryPageView: View {
     var model: StoryPage
 
     var body: some View {
-        Color.ypBlack
-            .ignoresSafeArea()
-            .overlay {
-                ZStack {
-                    fullImage
-                    information
-                }
-                .padding(.bottom, .L)
+        ZStack {
+            Color.ypBlack
+                .ignoresSafeArea()
+
+            Image(model.imageName)
+                .resizable()
+                .scaledToFill()
+                .clipShape(RoundedRectangle(cornerRadius: 40))
+                .padding(.top, .S)
+
+            VStack(alignment: .leading, spacing: .M) {
+                Spacer()
+
+                Text(model.title)
+                    .font(.boldLarge)
+                    .foregroundColor(.ypWhite)
+                    .lineLimit(2)
+
+                Text(model.description)
+                    .font(.regLarge)
+                    .foregroundColor(.ypWhite)
+                    .lineLimit(3)
             }
-    }
-}
-
-private extension StoryPageView {
-    var fullImage: some View {
-        Image(model.imageName)
-            .resizable()
-            .scaledToFill()
-            .clipShape(RoundedRectangle(cornerRadius: 40.0))
-            .padding(.top, .S)
-            .padding(.horizontal, .zero)
-    }
-
-    var information: some View {
-        VStack(alignment: .leading, spacing: .M) {
-            Spacer()
-            title
-            description
+            .padding(.horizontal, .M)
+            .padding(.bottom, 40)
         }
-        .foregroundStyle(Color.ypWhite)
-        .padding(.horizontal, .M)
-        .padding(.bottom, 40.0)
-    }
-
-    var title: some View {
-        Text(model.title)
-            .font(.boldLarge)
-            .lineLimit(LineLimits.title)
-    }
-
-    var description: some View {
-        Text(model.description)
-            .font(.regLarge)
-            .lineLimit(LineLimits.description)
-    }
-}
-
-private extension StoryPageView {
-    enum LineLimits {
-        static let title = 2
-        static let description = 3
     }
 }
 

@@ -7,9 +7,9 @@ struct StoriesTabView: View {
 
     var body: some View {
         TabView(selection: $storyIndex) {
-            ForEach(Array(stories.enumerated()), id: \.offset) { index, story in
+            ForEach(stories.indices, id: \.self) { index in
                 StoryPagesTabView(
-                    pages: story.totalPages,
+                    pages: stories[index].totalPages,
                     currentPage: $currentPage
                 )
                 .tag(index)
@@ -26,11 +26,12 @@ private struct StoryPagesTabView: View {
 
     var body: some View {
         TabView(selection: $currentPage) {
-            ForEach(Array(pages.enumerated()), id: \.offset) { index, page in
-                StoryPageView(model: page)
+            ForEach(pages.indices, id: \.self) { index in
+                StoryPageView(model: pages[index])
                     .tag(index)
             }
         }
+        .tabViewStyle(.page(indexDisplayMode: .never))
     }
 }
 

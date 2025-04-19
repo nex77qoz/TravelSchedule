@@ -1,44 +1,36 @@
 import SwiftUI
 
 struct PreviewStoriesView: View {
+    @State private var stories: [Story] = Story.mockData
+    @State private var storyIndex: Int = 0
+    @State private var isStoriesShowing: Bool = false
+
     private let rows = [GridItem(.flexible())]
-    @State var stories: [Story] = Story.mockData
-    @State var isStoriesShowing = false
-    @State var storyIndex = 0
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            previews
-        }
-        .frame(height: 188.0)
-    }
-}
-
-private extension PreviewStoriesView {
-    var previews: some View {
-        LazyHGrid(rows: rows, alignment: .center, spacing: .M) {
-            ForEach(Array(stories.enumerated()), id: \.offset) { index, story in
-                StoryPreviewView(storyPreview: story)
-                    .onTapGesture {
-                        isStoriesShowing = true
-                        storyIndex = index
-                    }
-                    .fullScreenCover(isPresented: $isStoriesShowing, onDismiss: didDismiss) {
-                        StoriesView(stories: $stories, storyIndex: $storyIndex)
-                    }
+            LazyHGrid(rows: rows, alignment: .center, spacing: .M) {
+                ForEach(stories.indices, id: \.self) { index in
+                    let story = stories[index]
+                    StoryPreviewView(storyPreview: story)
+                        .onTapGesture {
+                            storyIndex = index
+                            isStoriesShowing = true
+                        }
+                }
             }
+            .padding(.horizontal, .L)
+            .padding(.vertical, .XXL)
         }
-        .padding(.horizontal, .L)
-        .padding(.vertical, .XXL)
-    }
-}
-
-private extension PreviewStoriesView {
-    func didDismiss() {
-        isStoriesShowing = false
+        .frame(height: 188)
+        .fullScreenCover(isPresented: $isStoriesShowing, onDismiss: {
+            isStoriesShowing = false
+        }) {
+            StoriesView(stories: $stories, storyIndex: $storyIndex)
+        }
     }
 }
 
 #Preview {
-    PreviewStoriesView(stories: Story.mockData)
+    PreviewStoriesView()
 }

@@ -25,7 +25,7 @@ final class MainViewModel: ObservableObject {
         self.imageDownloader = ImageDownloader()
     }
 
-    func fetchData() throws {
+    func fetchData() {
         Task {
             state = .loading
             do {
@@ -34,7 +34,6 @@ final class MainViewModel: ObservableObject {
             } catch {
                 currentError = error.localizedDescription.contains("error 0.") ? .serverError : .connectionError
                 state = .error
-                throw currentError == .serverError ? ErrorType.serverError : ErrorType.connectionError
             }
         }
     }

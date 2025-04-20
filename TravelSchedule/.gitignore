@@ -28,9 +28,6 @@ Package.pins
 Package.resolved
 .xcworkspace/
 
-# Config files
-Config/APIKeys.plist
-
 # Other
 *.log
 *.swp

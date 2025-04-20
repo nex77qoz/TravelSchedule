@@ -1,6 +1,6 @@
 import Foundation
 
-struct TimerConfiguration {
+struct TimerConfiguration: Sendable {
     let totalPages: Int
     let tickInterval: TimeInterval
     let progressIncrement: CGFloat

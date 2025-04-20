@@ -1,6 +1,6 @@
 import Foundation
 
-struct Story: Identifiable {
+struct Story: Identifiable, Sendable {
     var id = UUID()
     var imageName: String
     var isShowed: Bool = false

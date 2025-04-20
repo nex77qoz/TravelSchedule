@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		757AF85E2DB0245D0097C280 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 757AF85D2DB0245D0097C280 /* Kingfisher */; };
+		757AF8612DB024760097C280 /* SVGKit in Frameworks */ = {isa = PBXBuildFile; productRef = 757AF8602DB024760097C280 /* SVGKit */; };
+		757AF8632DB024760097C280 /* SVGKitSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 757AF8622DB024760097C280 /* SVGKitSwift */; };
 		75859CBF2D72FA8800D800CC /* OpenAPIRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 75859CBE2D72FA8800D800CC /* OpenAPIRuntime */; };
 		75859CC22D72FA9800D800CC /* OpenAPIURLSession in Frameworks */ = {isa = PBXBuildFile; productRef = 75859CC12D72FA9800D800CC /* OpenAPIURLSession */; };
 		75C0CFCC2D97D5FB00A1EF16 /* OpenAPIKit in Frameworks */ = {isa = PBXBuildFile; productRef = 75C0CFCB2D97D5FB00A1EF16 /* OpenAPIKit */; };
@@ -31,6 +34,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				757AF8632DB024760097C280 /* SVGKitSwift in Frameworks */,
+				757AF85E2DB0245D0097C280 /* Kingfisher in Frameworks */,
+				757AF8612DB024760097C280 /* SVGKit in Frameworks */,
 				75859CBF2D72FA8800D800CC /* OpenAPIRuntime in Frameworks */,
 				75C0CFCC2D97D5FB00A1EF16 /* OpenAPIKit in Frameworks */,
 				75859CC22D72FA9800D800CC /* OpenAPIURLSession in Frameworks */,
@@ -84,6 +90,9 @@
 				75C0CFCB2D97D5FB00A1EF16 /* OpenAPIKit */,
 				75C0CFCD2D97D5FB00A1EF16 /* OpenAPIKit30 */,
 				75C0CFCF2D97D5FB00A1EF16 /* OpenAPIKitCompat */,
+				757AF85D2DB0245D0097C280 /* Kingfisher */,
+				757AF8602DB024760097C280 /* SVGKit */,
+				757AF8622DB024760097C280 /* SVGKitSwift */,
 			);
 			productName = TravelSchedule;
 			productReference = 75859CA92D72E88F00D800CC /* TravelSchedule.app */;
@@ -118,6 +127,8 @@
 				75859CC02D72FA9800D800CC /* XCRemoteSwiftPackageReference "swift-openapi-urlsession" */,
 				75859CC32D72FB1400D800CC /* XCRemoteSwiftPackageReference "swift-openapi-generator" */,
 				75C0CFCA2D97D5FB00A1EF16 /* XCRemoteSwiftPackageReference "OpenAPIKit" */,
+				757AF85C2DB0245D0097C280 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				757AF85F2DB024760097C280 /* XCRemoteSwiftPackageReference "SVGKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 75859CAA2D72E88F00D800CC /* Products */;
@@ -305,6 +316,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -339,6 +351,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -368,6 +381,22 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		757AF85C2DB0245D0097C280 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.3.2;
+			};
+		};
+		757AF85F2DB024760097C280 /* XCRemoteSwiftPackageReference "SVGKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SVGKit/SVGKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
 		75859CBD2D72FA8800D800CC /* XCRemoteSwiftPackageReference "swift-openapi-runtime" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-openapi-runtime";
@@ -403,6 +432,21 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		757AF85D2DB0245D0097C280 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 757AF85C2DB0245D0097C280 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		757AF8602DB024760097C280 /* SVGKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 757AF85F2DB024760097C280 /* XCRemoteSwiftPackageReference "SVGKit" */;
+			productName = SVGKit;
+		};
+		757AF8622DB024760097C280 /* SVGKitSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 757AF85F2DB024760097C280 /* XCRemoteSwiftPackageReference "SVGKit" */;
+			productName = SVGKitSwift;
+		};
 		75859CBE2D72FA8800D800CC /* OpenAPIRuntime */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 75859CBD2D72FA8800D800CC /* XCRemoteSwiftPackageReference "swift-openapi-runtime" */;

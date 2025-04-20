@@ -1,54 +1,89 @@
 import SwiftUI
 
 struct MainTabView: View {
-    @Binding var schedule: Schedule
-    @Binding var darkMode: Bool
-    
-    @State private var navPath: [ViewsChanger] = []
-    @State private var direction: Int = .departure
-    @State private var stories: [Story] = Story.mockData
-    
-    var body: some View {
-        NavigationStack(path: $navPath) {
-            ZStack {
-                TabView {
-                    SearchTabView(
-                        stories: $stories,
-                        schedule: $schedule,
-                        navPath: $navPath,
-                        direction: $direction
-                    )
-                    .tabItem {
-                        Image.iconTabSearch
-                    }
+    @StateObject var destinationsViewModel: SearchScreenViewModel
+    @StateObject var rootViewModel: MainViewModel
 
-                    SettingsView(darkMode: $darkMode)
-                        .tabItem {
-                            Image.iconTabSettings
-                        }
-                }
+    var body: some View {
+        NavigationStack(path: $rootViewModel.navPath) {
+            TabView {
+                searchScreenTab
+                settingsScreenTab
             }
+            .task {
+                rootViewModel.fetchData()
+            }
+            .sheet(isPresented: Binding(
+                get: { rootViewModel.state == .error },
+                set: { isPresenting in
+                }
+            )) {
+                errorView
+            }
+            .accentColor(Color.ypBlackDuo)
             .toolbar(.visible, for: .tabBar)
-            .accentColor(darkMode ? .white : .black)
             .navigationDestination(for: ViewsChanger.self) { pathValue in
                 switch pathValue {
                 case .cityView:
-                    CityView(schedule: $schedule, navPath: $navPath, direction: $direction)
-                        .toolbar(.hidden, for: .tabBar)
-
+                    CityView(
+                        navPath: $rootViewModel.navPath,
+                        destinationsViewModel: destinationsViewModel,
+                        viewModel: CityViewViewModel(store: rootViewModel.store)
+                    )
+                    .toolbar(.hidden, for: .tabBar)
                 case .stationView:
-                    StationView(schedule: $schedule, navPath: $navPath, direction: $direction)
-                        .toolbar(.hidden, for: .tabBar)
-
-                case .routeView:
-                    ThreadListView(schedule: $schedule)
-                        .toolbar(.hidden, for: .tabBar)
+                    StationScreen(
+                        navPath: $rootViewModel.navPath,
+                        destinationsViewModel: destinationsViewModel,
+                        viewModel: StationScreenViewModel(
+                            store: rootViewModel.store,
+                            city: destinationsViewModel.destinations[
+                                destinationsViewModel.direction
+                            ].city
+                        )
+                    )
+                    .toolbar(.hidden, for: .tabBar)
+                case .threadView:
+                    ThreadsScreen(
+                        viewModel: ThreadsScreenViewModel(
+                            destinations: destinationsViewModel.destinations,
+                            routesDownloader: rootViewModel.routesDownloader,
+                            imageDownloader: rootViewModel.imageDownloader
+                        )
+                    )
+                    .toolbar(.hidden, for: .tabBar)
                 }
             }
         }
     }
+
+    var searchScreenTab: some View {
+        SearchScreen(
+            navPath: $rootViewModel.navPath,
+            rootViewModel: rootViewModel,
+            viewModel: destinationsViewModel
+        )
+        .tabItem {
+            Image.iconTabSearch
+        }
+    }
+
+    var settingsScreenTab: some View {
+        SettingsScreen()
+            .tabItem {
+                Image.iconTabSettings
+            }
+    }
+
+    var errorView: some View {
+        ErrorView(errorType: rootViewModel.currentError)
+    }
 }
 
 #Preview {
-    MainTabView(schedule: .constant(Schedule.sampleData), darkMode: .constant(false))
+    MainTabView(
+        destinationsViewModel: SearchScreenViewModel(),
+        rootViewModel: MainViewModel(networkService: NetworkService())
+    )
+    .environmentObject(SettingsViewModel(networkService: NetworkService()))
 }

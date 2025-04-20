@@ -26,4 +26,5 @@ extension Image {
     
     // Прочие иконки
     static let cancel = Image(systemName: "xmark.circle.fill").renderingMode(.template)
+    static let marker = Image(systemName: "circle.fill")
 }
